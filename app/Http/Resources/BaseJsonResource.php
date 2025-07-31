@@ -19,7 +19,7 @@ abstract class BaseJsonResource extends JsonResource
     }
 
     public static function notUsingWithCollection()
-    {
+    {   
         static::$usedWithCollection = null;
     }
 

@@ -121,7 +121,7 @@ export const formatAmount = (num) => {
 export const currencySymbolHandling = (
     isRightside,
     currency,
-    value,
+    value = 0,
     is_forment
 ) => {
     if (isRightside?.is_currency_right === "true") {
@@ -139,7 +139,7 @@ export const currencySymbolHandling = (
     }
 };
 
-export const getFormattedDate = (date, config) => {
+export const getFormattedDate = (date = new Date(), config) => {
     const format = config && config.date_format;
     if (format === "d-m-y") {
         return moment(date).format("DD-MM-YYYY");

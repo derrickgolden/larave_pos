@@ -26,6 +26,9 @@ const ProductDetailsModel = (props) => {
     const [unitPrice, setUnitPrice] = useState(0);
     const [saleUnitType, setSaleUnitType] = useState(null);
     const [discount, setDiscount] = useState('0.00');
+    const [discountLimit, setDiscountLimit] = useState(
+        {fixed: {value: 2, limit: 0, label: `(Max: ${frontSetting?.value?.currency_symbol} 0.00)`}, 
+        percentage: {value: 1, limit: 0, label: `(Max: 0.00%)`}});
     const [orderTax, setOrderTax] = useState(Number(product.tax_value));
     const [errors, setErrors] = useState({
         product_cost: '',
@@ -52,6 +55,12 @@ const ProductDetailsModel = (props) => {
 
     useEffect(() => {
         productUnitDropdown(product.product_unit);
+
+        const pc_discount = ((product.product_discount / product.product_price) * 100).toFixed(2);
+        setDiscountLimit((obj) =>({
+            fixed: {value:2, limit: product.product_discount, label: `(Max: ${frontSetting?.value?.currency_symbol} ${product.product_discount})`},
+            percentage: {value:1, limit: pc_discount, label: `(Max: ${pc_discount}%)`},
+        }))
     }, []);
 
     useEffect(() => {
@@ -79,8 +88,10 @@ const ProductDetailsModel = (props) => {
         let isValid = false;
         if (!unitPrice) {
             errorss['product_cost'] = 'Please enter price';
-        } else if (discountType.value === 1 && discount > 100) {
-            errorss['discount'] = 'The Discount must not be greater than 100';
+        } else if (discountType.value === 1 && discount > discountLimit.percentage.limit) {
+            errorss['discount'] = `The Discount must not be greater than ${discountLimit.percentage.limit}`;
+        } else if (discountType.value === 2 && discount > Number(product.product_discount)) {
+            errorss['discount'] = `The Discount must not be greater than ${product.product_discount}`;
         } else if (discountType.value === 2 && discount > Number(unitPrice)) {
             errorss['discount'] = 'The Discount must not be greater than product price';
         } else if (taxType.value === '1' && Number(orderTax) > 100) {
@@ -174,6 +185,7 @@ const ProductDetailsModel = (props) => {
             const percentDiscount = discountType.value === '1' || discountType.value === 1 ? parseFloat(totalCost).toFixed(2) * Number(discount) / Number(100) : 0;
             dis = +percentDiscount;
         }
+
         return dis;
     };
 
@@ -187,6 +199,7 @@ const ProductDetailsModel = (props) => {
             let exclusiveTax = taxType.value === '1' || taxType.value === 1 ? parseFloat(total).toFixed(2) * Number(orderTax) / Number(100) : 0;
             tax = +exclusiveTax;
         }
+
         return tax;
     };
 
@@ -257,11 +270,14 @@ const ProductDetailsModel = (props) => {
                             />
                         </div>
                         <Form.Group className='col-md-12 mb-3' controlId='formBasicDiscount'>
-                            <Form.Label>{getFormattedMessage('globally.detail.discount')}: </Form.Label>
-                            <Form.Control type='text' name='discount' min='0'
-                                          onKeyPress={(event) => decimalValidate(event)}
-                                          className='form-control-solid' max='100'
-                                          onChange={onChangeDiscount} value={discount ? discount : ''}/>
+                            <Form.Label>{getFormattedMessage('globally.detail.discount')}: {
+                                Number(discountType.value) === 1? discountLimit.percentage.label : discountLimit.fixed.label
+                            }</Form.Label>
+                            <Form.Control type='text' 
+                                name='discount' min='0'
+                                onKeyPress={(event) => decimalValidate(event)}
+                                className='form-control-solid' max='100'
+                                onChange={onChangeDiscount} value={discount ? discount : ''}/>
                             <span
                                 className='text-danger'>{errors['discount'] ? errors['discount'] : null}</span>
                         </Form.Group>

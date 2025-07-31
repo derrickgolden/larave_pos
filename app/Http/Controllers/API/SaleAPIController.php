@@ -21,6 +21,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 /**
@@ -89,6 +90,7 @@ class SaleAPIController extends AppBaseController
 
     public function store(CreateSaleRequest $request): SaleResource
     {
+        Log::info("CreateSaleRequest", $request->all());
         if (isset($request->hold_ref_no)) {
             $holdExist = Hold::whereReferenceCode($request->hold_ref_no)->first();
             if (!empty($holdExist)) {

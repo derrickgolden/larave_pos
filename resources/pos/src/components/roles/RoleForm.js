@@ -139,13 +139,16 @@ const RoleForm = (props) => {
                     <div className='row'>
                         <div className='col-md-12'>
                             <Form.Group className='mb-5 form-group'>
-                                <Form.Label className='form-label fs-6 fw-bolder text-gray-700 mb-3'>{getFormattedMessage("globally.input.name.label")}: </Form.Label>
+                                <Form.Label className='form-label fs-6 fw-bolder text-gray-700 mb-3'>
+                                    {getFormattedMessage("globally.input.name.label")}: 
+                                </Form.Label>
                                 <span className='required'/>
-                                <Form.Control type='text' name='name' placeholder={placeholderText("globally.input.name.placeholder.label")}
-                                              className='form-control-solid'
-                                              autoFocus={true}
-                                              onChange={(event) => onChangeInput(event)}
-                                              value={rolesValue.name}/>
+                                <Form.Control type='text' name='name' 
+                                    placeholder={placeholderText("globally.input.name.placeholder.label")}
+                                    className='form-control-solid'
+                                    autoFocus={true}
+                                    onChange={(event) => onChangeInput(event)}
+                                    value={rolesValue.name}/>
                                 <span className='text-danger'>{errors['name'] ? errors['name'] : null}</span>
                             </Form.Group>
                         </div>
@@ -153,12 +156,15 @@ const RoleForm = (props) => {
                             <Form.Group className='mb-5 form-group'>
                                 <div className='d-flex col-md-12 flex-wrap align-items-center'>
                                 <Form.Label
-                                    className='form-label fs-6 fw-bolder text-gray-700 mb-0'>{getFormattedMessage("role.input.permission.label")}: </Form.Label>
+                                    className='form-label fs-6 fw-bolder text-gray-700 mb-0'>
+                                        {getFormattedMessage("role.input.permission.label")}: 
+                                </Form.Label>
                                 <span className='required'/>
                                 <div className='d-flex col-md-6 flex-wrap ps-5'>
                                       <div className="col-md-8">
                                           <label
-                                              className='form-check form-check-custom form-check-solid form-check-inline d-flex align-items-center my-3 cursor-pointer custom-label'
+                                              className='form-check form-check-custom form-check-solid 
+                                              form-check-inline d-flex align-items-center my-3 cursor-pointer custom-label'
                                               >
                                               <input type='checkbox' checked={allChecked}
                                                      name='all_check'
@@ -176,7 +182,8 @@ const RoleForm = (props) => {
                                             return (
                                                 <div className="col-md-4">
                                                     <label
-                                                        className='form-check form-check-custom form-check-solid form-check-inline d-flex align-items-center my-3 cursor-pointer custom-label'
+                                                        className='form-check form-check-custom form-check-solid 
+                                                        form-check-inline d-flex align-items-center my-3 cursor-pointer custom-label'
                                                         key={index}>
                                                         <input type='checkbox' checked={permissions[index].selected}
                                                                name={permission.name}

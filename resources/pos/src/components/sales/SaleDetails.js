@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { connect } from "react-redux";
 import { Col, Row, Table } from "react-bootstrap-v5";
@@ -21,6 +21,10 @@ import {
     faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
+import { useReactToPrint } from "react-to-print";
+import PrintData from "../../frontend/components/printModal/PrintData";
+import PaymentSlipModal from "../../frontend/components/paymentSlipModal/PaymentSlipModal";
+import { fetchSetting } from "../../store/action/settingAction";
 
 const SaleDetails = (props) => {
     const {
@@ -28,17 +32,121 @@ const SaleDetails = (props) => {
         saleDetails,
         fetchFrontSetting,
         frontSetting,
+        settings,
+        fetchSetting,
         allConfigData,
     } = props;
     const { id } = useParams();
 
-    useEffect(() => {
-        fetchFrontSetting();
-    }, []);
+    const componentRef = useRef();
+    const [modalShowPaymentSlip, setModalShowPaymentSlip] = useState(false);
+    const [paymentPrint, setPaymentPrint] = useState({});
+    const [paymentValue, setPaymentValue] = useState({
+            // payment_type: paymentTypeDefaultValue[0],
+            payment_type: {}
+        });
 
     useEffect(() => {
+        fetchSetting();
+        fetchFrontSetting();
         saleDetailsAction(id);
     }, []);
+
+    const printPaymentReceiptPdf = () => {
+        document.getElementById("printReceipt").click();
+    };
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+    
+        //prepare data for print Model
+        const preparePrintData = () => {
+
+            const formValue = {
+                products: saleDetails?.sale_items.map((items) =>{
+                    return({...items.product, ...items, net_unit_cost: items.product_price, 
+                        sale_unit: items?.sale_unit?.id});
+                }),
+                discount: saleDetails?.discount,
+                tax: saleDetails?.tax_rate,
+                cartItemPrint: {discount: saleDetails?.discount, shipping: saleDetails?.shipping, tax: saleDetails?.tax_rate},
+                taxTotal: saleDetails?.tax_amount,
+                grandTotal: saleDetails?.grand_total,
+                shipping: saleDetails?.shipping,
+                subTotal: (Number(saleDetails?.discount) + Number(saleDetails?.grand_total)) - (Number(saleDetails?.shipping) + Number(saleDetails?.tax_amount)),
+                frontSetting: frontSetting,
+                customer_name: {value: saleDetails?.customer?.id, label: saleDetails?.customer?.name},
+                settings: settings,
+                note: saleDetails?.note,
+                changeReturn : 0,
+                payment_status: {value: saleDetails?.payment_status},
+                reference_code: saleDetails?.reference_code,
+            };
+            setPaymentPrint(formValue);
+            setModalShowPaymentSlip(true);
+            return formValue;
+        };
+    
+    const getPaymentTypeLabel = (row) => {
+        if (row.payment_status === 2) return '';
+
+        switch (row.payment_type) {
+            case 1:
+                return getFormattedMessage("cash.label");
+            case 2:
+                return getFormattedMessage("payment-type.filter.cheque.label");
+            case 3:
+                return getFormattedMessage("payment-type.filter.bank-transfer.label");
+            case 4:
+                return getFormattedMessage("payment-type.filter.other.label");
+            default:
+                return '';
+        }
+    };
+
+        const loadPrintBlock = () => {
+            const {payment_type, payment_status} = saleDetails;
+            return (
+                <div className="d-none">
+                    <button id="printReceipt" onClick={handlePrint}>
+                        Print this out!
+                    </button>
+                    <PrintData
+                        ref={componentRef}
+                        paymentType={getPaymentTypeLabel({payment_type, payment_status})}
+                        allConfigData={allConfigData}
+                        updateProducts={paymentPrint}
+                        date={saleDetails.date}
+                    />
+                </div>
+            );
+        };
+    
+        //payment slip
+            const loadPaymentSlip = () => {
+                const {payment_type, payment_status} = saleDetails;
+                return (
+                    <div className="d-none">
+                        <PaymentSlipModal
+                            printPaymentReceiptPdf={printPaymentReceiptPdf}
+                            setPaymentValue={setPaymentValue}
+                            setModalShowPaymentSlip={setModalShowPaymentSlip}
+                            settings={settings}
+                            frontSetting={frontSetting}
+                            modalShowPaymentSlip={modalShowPaymentSlip}
+                            allConfigData={allConfigData}
+                            paymentDetails={{attributes: {reference_code: saleDetails?.reference_code}}}
+                            updateProducts={paymentPrint}
+                            // cashPaymentValue={cashPaymentValue}
+                            paymentType={getPaymentTypeLabel({payment_type, payment_status})}
+                            date={saleDetails.date}
+                            // paymentTypeDefaultValue={paymentTypeDefaultValue}
+                        />
+                    </div>
+                );
+            };
+    
 
     return (
         <MasterLayout>
@@ -46,8 +154,12 @@ const SaleDetails = (props) => {
             <HeaderTitle
                 title={getFormattedMessage("sale.details.title")}
                 to="/app/sales"
+                print={preparePrintData}
             />
+            
             <TabTitle title={placeholderText("sale.details.title")} />
+            {loadPrintBlock()}
+            {loadPaymentSlip()}
             <div className="card">
                 <div className="card-body">
                     <Form>
@@ -459,11 +571,12 @@ const SaleDetails = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const { saleDetails, frontSetting, allConfigData } = state;
-    return { saleDetails, frontSetting, allConfigData };
+    const { saleDetails, frontSetting, settings, allConfigData } = state;
+    return { saleDetails, frontSetting, settings, allConfigData };
 };
 
 export default connect(mapStateToProps, {
+    fetchSetting,
     saleDetailsAction,
     fetchFrontSetting,
 })(SaleDetails);

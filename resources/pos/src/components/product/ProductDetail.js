@@ -244,6 +244,9 @@ const ProductDetail = (props) => {
                                         "product.table.price.column.label"
                                     )}
                                 </th>
+                                <th>
+                                    Discount
+                                </th>
 
                                 <th>
                                     {getFormattedMessage(
@@ -287,6 +290,15 @@ const ProductDetail = (props) => {
                                             frontSetting.value
                                                 .currency_symbol,
                                             data.product_price
+                                        )}
+                                    </td>
+                                    <td className="py-4">
+                                        {currencySymbolHandling(
+                                            allConfigData,
+                                            frontSetting.value &&
+                                            frontSetting.value
+                                                .currency_symbol,
+                                            data.product_discount
                                         )}
                                     </td>
 

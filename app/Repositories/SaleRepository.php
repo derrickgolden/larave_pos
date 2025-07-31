@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -96,6 +97,7 @@ class SaleRepository extends BaseRepository
             /** @var Sale $sale */
             $sale = Sale::create($saleInputArray);
 
+            Log::info("hello sale", (array)$sale);
             if ($input['is_sale_created'] && $QuotationId) {
                 $quotation = Quotation::find($QuotationId);
                 $quotation->update([

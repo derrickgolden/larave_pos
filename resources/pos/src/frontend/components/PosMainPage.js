@@ -94,7 +94,7 @@ const PosMainPage = (props) => {
         discount_type: discountType.FIXED,    // 0 = fixed, 1 = percentage
         discount_value: 0,
         discount: 0,
-        tax: 16,
+        tax: 0,
         shipping: 0,
     });
     const [cashPaymentValue, setCashPaymentValue] = useState({
@@ -141,7 +141,7 @@ const PosMainPage = (props) => {
     //grand total on cart item
     const discountTotal = subTotal - cartItemValue.discount;
     const taxTotal = (discountTotal * cartItemValue.tax) / 100;
-    const mainTotal = discountTotal;
+    const mainTotal = discountTotal + taxTotal;
     const grandTotal = (
         Number(mainTotal) + Number(cartItemValue.shipping)
     ).toFixed(2);
@@ -282,11 +282,29 @@ const PosMainPage = (props) => {
         }
 
         let discount = cartItemValue.discount;
+
+        let allowed_disc = 0
+        updateProducts.map((updateProduct) =>{
+            allowed_disc += (Number(updateProduct.product_discount) * updateProduct.quantity);
+        });
+
         if (event.target.name == 'discount_value') {
             if (cartItemValue.discount_type == discountType.FIXED) {
-                discount = value;
+                if(allowed_disc >= Number(value)){
+                    discount = value;
+                } else {
+                    discount = 0;
+                    alert(`Discount can not be more than ${allowed_disc}`)
+                };
             } else {
-                discount = (Number(subTotal) * Number(value)) / 100;
+                let pc_disc = ((allowed_disc / Number(subTotal)) * 100).toFixed(2);
+                let disc = (Number(subTotal) * Number(value)) / 100;
+                if(pc_disc >= Number(value)){
+                    discount = disc;
+                } else {
+                    discount = 0;
+                    alert(`Discount can not be more than ${pc_disc}%`)
+                };
             }
         }
         if (event.target.name === 'discount_type') {
@@ -296,7 +314,6 @@ const PosMainPage = (props) => {
                 discount = (Number(subTotal) * Number(cartItemValue.discount_value)) / 100;
             }
         }
-
         setCartItemValue((inputs) => ({
             ...inputs,
             discount: discount,
@@ -457,7 +474,7 @@ const PosMainPage = (props) => {
                 discount_type: discountType.FIXED,
                 discount_value: 0,
                 discount: 0,
-                tax: 16,
+                tax: 0,
                 shipping: 0,
             });
             setCashPaymentValue({

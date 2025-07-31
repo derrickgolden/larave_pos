@@ -10,6 +10,7 @@ import {
 } from "../../../shared/sharedMethod";
 class PrintData extends React.PureComponent {
     render() {
+        const date = this.props.date;
         const paymentPrint = this.props.updateProducts;
         const allConfigData = this.props.allConfigData;
         const paymentType = this.props.paymentType;
@@ -67,7 +68,7 @@ class PrintData extends React.PureComponent {
                         </span>
                         <span>
                             {getFormattedDate(
-                                new Date(),
+                                date,
                                 allConfigData && allConfigData
                             )}
                         </span>
@@ -177,7 +178,7 @@ class PrintData extends React.PureComponent {
                                     <div className="product-border">
                                         <div className="border-0 d-flex justify-content-between">
                                             <span className="text-black">
-                                                {productName.quantity.toFixed(
+                                                {Number(productName.quantity).toFixed(
                                                     2
                                                 )}{" "}
                                                 {(productName.product_unit ===
@@ -190,9 +191,9 @@ class PrintData extends React.PureComponent {
                                                         "2" &&
                                                         "M")}{" "}
                                                 X{" "}
-                                                {calculateProductCost(
+                                                {Number(calculateProductCost(
                                                     productName
-                                                ).toFixed(2)}
+                                                )).toFixed(2)}
                                             </span>
                                             <span className="text-end">
                                                 {currencySymbolHandling(

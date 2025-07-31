@@ -21,6 +21,7 @@ const PaymentSlipModal = (props) => {
         allConfigData,
         setPaymentValue,
         paymentTypeDefaultValue,
+        date,
     } = props;
     const currency =
         updateProducts.settings &&
@@ -75,7 +76,7 @@ const PaymentSlipModal = (props) => {
                                 </span>
                                 <span className="ms-2 font-label">
                                     {getFormattedDate(
-                                        new Date(),
+                                        date,
                                         allConfigData && allConfigData
                                     )}
                                 </span>

@@ -44,6 +44,7 @@ class CreateMainProductRequest extends FormRequest
                 'images.*' => 'image|mimes:jpg,jpeg,png',
                 'variation_data.*.product_cost' => 'required|numeric',
                 'variation_data.*.product_price' => 'required|numeric',
+                'variation_data.*.product_discount' => 'required|numeric',
                 'variation_data.*.stock_alert' => 'nullable',
                 'variation_data.*.order_tax' => 'nullable|numeric',
                 'variation_data.*.tax_type' => 'nullable',
@@ -59,8 +60,10 @@ class CreateMainProductRequest extends FormRequest
             'code.unique' => __('messages.error.code_taken'),
             'variation_data.*.product_cost.required' => 'The product cost field is required.',
             'variation_data.*.product_price.required' => 'The product price field is required.',
+            'variation_data.*.product_discount.required' => 'The product discount field is required.',
             'variation_data.*.product_cost.numeric' => 'The product cost must be a number.',
             'variation_data.*.product_price.numeric' => 'The product price must be a number.',
+            'variation_data.*.product_discount.numeric' => 'The product discount must be a number.',
             'variation_data.*.order_tax.numeric' => 'The order tax must be a number.',
             'variation_data.*.code.unique' => 'The code has already been taken.',
         ];

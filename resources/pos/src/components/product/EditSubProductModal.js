@@ -15,6 +15,7 @@ const EditSubProductModal = (props) => {
     const [product, setProduct] = useState({});
     const [formInput, setFormInput] = useState({
         product_price: "",
+        product_discount: "",
         product_cost: "",
         order_tax: "",
         stock_alert: "",
@@ -33,16 +34,19 @@ const EditSubProductModal = (props) => {
             setFormInput((prev) => ({
                 ...prev,
                 product_price: productData.product_price,
+                product_discount: productData.product_discount,
                 product_cost: productData.product_cost,
                 order_tax: productData.order_tax ? productData.order_tax : "",
                 stock_alert: productData.stock_alert,
                 tax_type: productData.tax_type,
                 code: productData.code
             }));
+            console.log({productData});
         } else {
             setProduct({});
             setFormInput({
                 product_price: "",
+                product_discount: "",
                 product_cost: "",
                 order_tax: "",
                 stock_alert: "",
@@ -76,6 +80,8 @@ const EditSubProductModal = (props) => {
             validationErrors['product_cost'] = getFormattedMessage('product.input.product-cost.validate.label');
         } else if (formInput['product_price'] == '') {
             validationErrors['product_price'] = getFormattedMessage('product.input.product-price.validate.label');
+        } else if (formInput['product_discount'] == '') {
+            validationErrors['product_discount'] = getFormattedMessage('Please enter product discount');
         }else if (formInput['code'] == '') {
             validationErrors['code'] = getFormattedMessage('product.input.code.validate.label');
         } else if (formInput['order_tax'] > 100) {
@@ -115,6 +121,7 @@ const EditSubProductModal = (props) => {
 
         formData.append('code', formInput.code);
         formData.append('product_price', formInput.product_price);
+        formData.append('product_discount', formInput.product_discount);
         formData.append('product_cost', formInput.product_cost);
         formData.append('order_tax', formInput.order_tax);
         formData.append('stock_alert', formInput.stock_alert);
@@ -181,9 +188,7 @@ const EditSubProductModal = (props) => {
                                             name="product_cost"
                                             min={0}
                                             className="form-control"
-                                            placeholder={placeholderText(
-                                                "product.input.product-cost.placeholder.label"
-                                            )}
+                                            placeholder="Discount"
                                             onKeyPress={(event) =>
                                                 decimalValidate(event)
                                             }
@@ -242,6 +247,45 @@ const EditSubProductModal = (props) => {
                                     <span className="text-danger d-block fw-400 fs-small mt-2">
                                         {errors["product_price"]
                                             ? errors["product_price"]
+                                            : null}
+                                    </span>
+                                </div>
+                                <div className="col-md-3 mb-3">
+                                    <label className="form-label">
+                                        {getFormattedMessage(
+                                            "product.input.product-discount.label"
+                                        )}
+                                        :{" "}
+                                    </label>
+                                    <span className="required" />
+                                    <InputGroup>
+                                        <input
+                                            type="text"
+                                            name="product_discount"
+                                            min={0}
+                                            className="form-control"
+                                            placeholder={placeholderText(
+                                                "product.input.product-price.placeholder.label"
+                                            )}
+                                            onKeyPress={(event) =>
+                                                decimalValidate(event)
+                                            }
+                                            onChange={(e) =>
+                                                onProductDataChange(e)
+                                            }
+                                            value={
+                                                formInput.product_discount
+                                            }
+                                        />
+                                        <InputGroup.Text>
+                                            {frontSetting.value &&
+                                                frontSetting.value
+                                                    .currency_symbol}
+                                        </InputGroup.Text>
+                                    </InputGroup>
+                                    <span className="text-danger d-block fw-400 fs-small mt-2">
+                                        {errors["product_discount"]
+                                            ? errors["product_discount"]
                                             : null}
                                     </span>
                                 </div>

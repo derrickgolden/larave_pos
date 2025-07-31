@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import moment from "moment";
 import { connect, useDispatch, useSelector } from "react-redux";
 import MasterLayout from "../MasterLayout";
@@ -15,10 +15,12 @@ import {
 import { salePdfAction } from "../../store/action/salePdfAction";
 import ActionDropDownButton from "../../shared/action-buttons/ActionDropDownButton";
 import { fetchFrontSetting } from "../../store/action/frontSettingAction";
+import { fetchSetting } from "../../store/action/settingAction";
 import ShowPayment from "../../shared/showPayment/ShowPayment";
 import CreatePaymentModal from "./CreatePaymentModal";
 import { fetchSalePayments } from "../../store/action/salePaymentAction";
 import TopProgressBar from "../../shared/components/loaders/TopProgressBar";
+import { useNavigate } from "react-router";
 
 const Sales = (props) => {
     const {
@@ -29,9 +31,12 @@ const Sales = (props) => {
         salePdfAction,
         fetchFrontSetting,
         frontSetting,
+        settings,
+        fetchSetting,
         isCallSaleApi,
         allConfigData,
     } = props;
+    const navigate = useNavigate()
     const [deleteModel, setDeleteModel] = useState(false);
     const [isShowPaymentModel, setIsShowPaymentModel] = useState(false);
     const [isCreatePaymentOpen, setIsCreatePaymentOpen] = useState(false);
@@ -41,6 +46,7 @@ const Sales = (props) => {
     const [tableArray, setTableArray] = useState([]);
     useEffect(() => {
         fetchFrontSetting();
+        props.fetchSetting();
     }, []);
 
     const currencySymbol =
@@ -82,8 +88,9 @@ const Sales = (props) => {
     };
 
     //sale details function
-    const goToDetailScreen = (ProductId) => {
-        window.location.href = "#/app/sales/detail/" + ProductId;
+    const goToDetailScreen = (item) => {
+        navigate(`/app/sales/detail/${item.id}`, { state: { item } });
+        // window.location.href = "#/app/sales/detail/" + ProductId;
     };
 
     //onClick pdf function
@@ -468,6 +475,7 @@ const mapStateToProps = (state) => {
         totalRecord,
         isLoading,
         frontSetting,
+        settings,
         isCallSaleApi,
         allConfigData,
     } = state;
@@ -476,6 +484,7 @@ const mapStateToProps = (state) => {
         totalRecord,
         isLoading,
         frontSetting,
+        settings,
         isCallSaleApi,
         allConfigData,
     };
@@ -485,4 +494,5 @@ export default connect(mapStateToProps, {
     fetchSales,
     salePdfAction,
     fetchFrontSetting,
+    fetchSetting,
 })(Sales);

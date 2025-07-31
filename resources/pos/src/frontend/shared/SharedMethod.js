@@ -1,8 +1,8 @@
 //count discount on price
 export const calculateDiscount = ( totalCost ) => {
-    if ( totalCost.discount_value > 0 && totalCost.discount_type === '2' || totalCost.discount_type === 2 ) {
+    if ( Number(totalCost.discount_value) > 0 && totalCost.discount_type === '2' || totalCost.discount_type === 2 ) {
         totalCost = ( +totalCost.net_unit_cost - Number( totalCost.discount_value ) )
-    } else if ( totalCost.discount_value > 0 && totalCost.discount_type === '1' || totalCost.discount_type === 1 ) {
+    } else if ( Number(totalCost.discount_value) > 0 && totalCost.discount_type === '1' || totalCost.discount_type === 1 ) {
         const percentDiscount = totalCost.discount_type === '1' || totalCost.discount_type === 1 ? parseFloat( totalCost.net_unit_cost ).toFixed( 2 ) * Number( totalCost.discount_value ) / Number( 100 ) : 0;
         totalCost = ( +totalCost.net_unit_cost - ( percentDiscount ) );
     }

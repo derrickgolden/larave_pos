@@ -27,6 +27,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property int $main_product_id
  * @property float $product_cost
  * @property float $product_price
+ * @property float $product_discount
  * @property string $product_unit
  * @property string|null $sale_unit
  * @property string|null $purchase_unit
@@ -117,6 +118,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         'brand_id',
         'product_cost',
         'product_price',
+        'product_discount',
         'product_unit',
         'sale_unit',
         'purchase_unit',
@@ -136,6 +138,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         'brand_id' => 'required|exists:brands,id',
         'product_cost' => 'required|numeric',
         'product_price' => 'required|numeric',
+        'product_discount' => 'required|numeric',
         'product_unit' => 'required',
         'sale_unit' => 'nullable',
         'purchase_unit' => 'nullable',
@@ -156,6 +159,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     protected $casts = [
         'product_cost' => 'float',
         'product_price' => 'float',
+        'product_discount' => 'float',
         'grand_total' => 'float',
         'order_tax' => 'float',
     ];
@@ -211,6 +215,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'brand_id' => $this->brand_id,
             'product_cost' => $this->product_cost,
             'product_price' => $this->product_price,
+            'product_discount' => $this->product_discount,
             'product_unit' => $this->product_unit,
             'sale_unit' => $this->sale_unit,
             'purchase_unit' => $this->purchase_unit,
@@ -333,6 +338,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'code' => $this->code,
             'product_code' => $this->product_code,
             'price' => $this->product_price,
+            'discount' => $this->product_discount,
             'sale_unit' => array_values($this->getProductUnitName())[1],
             'remaining_quantity' => $this->stock->quantity ?? 0,
             'images' => $imageUrls['imageUrls'] ?? [],
@@ -345,6 +351,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'name' => $this->name,
             'total_quantity' => $this->total_quantity,
             'price' => $this->product_price,
+            'discount' => $this->product_discount,
             'grand_total' => $this->grand_total,
             'code' => $this->code,
             'product_code' => $this->product_code,

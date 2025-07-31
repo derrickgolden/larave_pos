@@ -28,7 +28,7 @@ const ActionDropDownButton = (props) => {
                 {isViewIcon ?
                     <Dropdown.Item onClick={(e) => {
                         e.stopPropagation();
-                        goToDetailScreen(item.id)
+                        goToDetailScreen(item)
                     }} eventKey='1' className='py-3 px-4 d-flex align-items-center fs-6'>
                         <FontAwesomeIcon icon={faEye}
                                          className='me-2'/>{getFormattedMessage('globally.view.tooltip.label')} {title}

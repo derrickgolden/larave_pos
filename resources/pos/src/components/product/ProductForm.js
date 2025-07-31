@@ -92,6 +92,7 @@ const ProductForm = (props) => {
     const [singleProductTypeData, setSingleProductTypeData] = useState({
         product_cost: "",
         product_price: "",
+        product_discount: "",
         stock_alert: "",
         order_tax: "",
         tax_type: "",
@@ -170,6 +171,7 @@ const ProductForm = (props) => {
               singleProduct[0].name === productValue.name &&
               singleProduct[0].notes === productValue.notes &&
               singleProduct[0].product_price === productValue.product_price &&
+              singleProduct[0].product_discount === productValue.product_discount &&
               singleProduct[0]?.stock_alert?.toString() ===
                   productValue.stock_alert &&
               singleProduct[0].product_cost === productValue.product_cost &&
@@ -315,7 +317,6 @@ const ProductForm = (props) => {
         }));
         setErrors({});
     };
-console.log(productValue);
     const productTypesOptionsObj = getFormattedOptions(productTypesOptions);
 
     // tax type dropdown functionality
@@ -402,6 +403,7 @@ console.log(productValue);
                     variation_type: variationType?.label,
                     product_cost: "",
                     product_price: "",
+                    product_discount: "",
                     stock_alert: 0,
                     order_tax: 0,
                     tax_type: "",
@@ -430,6 +432,7 @@ console.log(productValue);
                         variation_type: newVariationType[0]?.label,
                         product_cost: "",
                         product_price: "",
+                        product_discount: "",
                         stock_alert: 0,
                         order_tax: 0,
                         tax_type: "",
@@ -496,6 +499,15 @@ console.log(productValue);
                 error[`${variationType.variation_type_id}_product_price`] =
                     getFormattedMessage(
                         "product.input.product-price.validate.label"
+                    );
+            } else if (
+                Object.keys(error).length <= 0 &&
+                (!variationType.product_discount ||
+                    variationType.product_discount === "")
+            ) {
+                error[`${variationType.variation_type_id}_product_discount`] =
+                    getFormattedMessage(
+                        "product.input.product-discount.validate.label"
                     );
             } else if (
                 Object.keys(error).length <= 0 &&
@@ -639,6 +651,14 @@ console.log(productValue);
             ) {
                 errorss["product_price"] = getFormattedMessage(
                     "product.input.product-price.validate.label"
+                );
+            } else if (
+                productValue.product_type.value === 1 &&
+                (!singleProductTypeData.product_discount ||
+                    singleProductTypeData.product_discount === "")
+            ) {
+                errorss["product_discount"] = getFormattedMessage(
+                    "product.input.product-discount.validate.label"
                 );
             } else if (
                 productValue.product_type.value === 1 &&
@@ -805,6 +825,10 @@ console.log(productValue);
                     singleProductTypeData.product_price
                 );
                 formData.append(
+                    "product_discount",
+                    singleProductTypeData.product_discount
+                );
+                formData.append(
                     "stock_alert",
                     singleProductTypeData.stock_alert
                         ? singleProductTypeData.stock_alert
@@ -852,6 +876,7 @@ console.log(productValue);
     const onSubmit = (event) => {
         event.preventDefault();
         const valid = handleValidation();
+        
         productValue.images = multipleFiles;
         if (
             singleProduct &&
@@ -1373,6 +1398,31 @@ console.log(productValue);
                                     </span>
                                 </div>
                                 <div className="col-md-3 mb-3">
+    <label className="form-label">
+        {getFormattedMessage("product.input.product-discount.label")}:
+    </label>
+    <span className="required" />
+    <InputGroup>
+        <input
+            type="text"
+            name="product_discount"
+            min={0}
+            className="form-control"
+            placeholder={placeholderText("product.input.product-discount.placeholder.label")}
+            onKeyPress={(event) => decimalValidate(event)}
+            onChange={(e) => onSingleProductDataChange(e)}
+            value={singleProductTypeData.product_discount}
+        />
+        <InputGroup.Text>
+            {frontSetting.value && frontSetting.value.currency_symbol}
+        </InputGroup.Text>
+    </InputGroup>
+    <span className="text-danger d-block fw-400 fs-small mt-2">
+        {errors["product_discount"] ? errors["product_discount"] : null}
+    </span>
+</div>
+
+                                <div className="col-md-3 mb-3">
                                     <label className="form-label">
                                         {getFormattedMessage(
                                             "product.input.stock-alert.label"
@@ -1632,6 +1682,35 @@ console.log(productValue);
                                                 : null}
                                         </span>
                                     </div>
+                                    <div className="col-md-3 mb-3">
+    <label className="form-label">
+        {getFormattedMessage("product.input.product-discount.label")}:
+    </label>
+    <span className="required" />
+    <InputGroup>
+        <input
+            type="text"
+            name="product_discount"
+            min={0}
+            className="form-control"
+            placeholder={placeholderText("product.input.product-discount.placeholder.label")}
+            onKeyPress={(event) => decimalValidate(event)}
+            onChange={(e) =>
+                onChangeVariationTypesData(e, variation.variation_type_id)
+            }
+            value={variation.product_discount}
+        />
+        <InputGroup.Text>
+            {frontSetting.value && frontSetting.value.currency_symbol}
+        </InputGroup.Text>
+    </InputGroup>
+    <span className="text-danger d-block fw-400 fs-small mt-2">
+        {errors[`${variation.variation_type_id}_product_discount`]
+            ? errors[`${variation.variation_type_id}_product_discount`]
+            : null}
+    </span>
+</div>
+
                                     <div className="col-md-3 mb-3">
                                         <label className="form-label">
                                             {getFormattedMessage(

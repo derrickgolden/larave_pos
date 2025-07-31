@@ -20,7 +20,7 @@ const EditRole = (props) => {
         name: role.attributes.name,
         permissions: role.attributes.permissions
     }));
-
+    
     useEffect(() => {
         fetchAllWarehouses();
         fetchPermissions();

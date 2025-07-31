@@ -10,6 +10,7 @@ export const prepareCartArray = products => {
             net_unit_cost: product.attributes.product_price,
             tax_type: product.attributes.tax_type.value ? Number(product.attributes.tax_type.value) : product.attributes.tax_type,
             product_price: product.attributes.product_price,
+            product_discount: product.attributes.product_discount,
             tax_amount: 0,
             discount_type: 1,
             discount_value: 0,

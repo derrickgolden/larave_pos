@@ -9,11 +9,14 @@ const PosHeader = ( props ) => {
     return (
         <div className='top-nav my-3'>
             <Row className="align-items-center justify-content-between grp-select h-100">
-                <CustomerDropDown setSelectedCustomerOption={setSelectedCustomerOption}
-                    selectedCustomerOption={selectedCustomerOption} customerModel={customerModel}
+                <CustomerDropDown 
+                    setSelectedCustomerOption={setSelectedCustomerOption}
+                    selectedCustomerOption={selectedCustomerOption} 
+                    customerModel={customerModel}
                     updateCustomer={updateCustomer} />
 
-                <WarehouseDropDown setSelectedOption={setSelectedOption}
+                <WarehouseDropDown 
+                    setSelectedOption={setSelectedOption}
                     selectedOption={selectedOption} />
             </Row>
         </div>
