@@ -49,6 +49,7 @@ const SaleReport = (props) => {
             customer_name: sale.attributes.customer_name,
             warehouse_name: sale.attributes.warehouse_name,
             status: sale.attributes.status,
+            payment_type: sale.attributes.payment_type,
             payment_status: sale.attributes.payment_status,
             grand_total: sale.attributes.grand_total,
             paid_amount: sale.attributes.paid_amount
@@ -135,6 +136,47 @@ const SaleReport = (props) => {
             sortField: "paid_amount",
             sortable: true,
         },
+        {
+                    name: getFormattedMessage("select.payment-type.label"),
+                    sortField: "payment_type",
+                    sortable: false,
+                    cell: (row) => {
+                        return (
+                            (row.payment_status !== 2 && row.payment_type === 1 && (
+                                <span className="badge bg-light-primary">
+                                    <span>{getFormattedMessage("cash.label")}</span>
+                                </span>
+                            )) ||
+                            (row.payment_status !== 2 && row.payment_type === 2 && (
+                                <span className="badge bg-light-primary">
+                                    <span>
+                                        {getFormattedMessage(
+                                            "payment-type.filter.cheque.label"
+                                        )}
+                                    </span>
+                                </span>
+                            )) ||
+                            (row.payment_status !== 2 && row.payment_type === 3 && (
+                                <span className="badge bg-light-primary">
+                                    <span>
+                                        {getFormattedMessage(
+                                            "payment-type.filter.bank-transfer.label"
+                                        )}
+                                    </span>
+                                </span>
+                            )) ||
+                            (row.payment_status !== 2 && row.payment_type === 4 && (
+                                <span className="badge bg-light-primary">
+                                    <span>
+                                        {getFormattedMessage(
+                                            "payment-type.filter.other.label"
+                                        )}
+                                    </span>
+                                </span>
+                            ))
+                        );
+                    },
+                },
         {
             name: getFormattedMessage(
                 "dashboard.recentSales.paymentStatus.label"

@@ -34,7 +34,7 @@ const PaymentSlipModal = (props) => {
             onHide={() => {
                 setModalShowPaymentSlip(false);
                 setPaymentValue({
-                    payment_type: paymentTypeDefaultValue[0],
+                    payment_type: {},
                 });
             }}
             size="sm"
@@ -382,7 +382,7 @@ const PaymentSlipModal = (props) => {
                     onClick={() => {
                         setModalShowPaymentSlip(false);
                         setPaymentValue({
-                            payment_type: paymentTypeDefaultValue[0],
+                            payment_type: {},
                         });
                     }}
                 >

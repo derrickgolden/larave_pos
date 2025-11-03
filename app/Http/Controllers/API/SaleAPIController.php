@@ -90,7 +90,7 @@ class SaleAPIController extends AppBaseController
 
     public function store(CreateSaleRequest $request): SaleResource
     {
-        Log::info("CreateSaleRequest", $request->all());
+        Log::info("SaleApiController info:", $request->all());
         if (isset($request->hold_ref_no)) {
             $holdExist = Hold::whereReferenceCode($request->hold_ref_no)->first();
             if (!empty($holdExist)) {

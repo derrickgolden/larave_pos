@@ -33,6 +33,7 @@ const CashPaymentModel = (props) => {
         paymentTypeFilterOptions,
         allConfigData,
         onChangeReturnChange,
+        paymentValue
     } = props;
 
     const [summation, setSummation] = useState(0);
@@ -146,7 +147,7 @@ const CashPaymentModel = (props) => {
                                     onChange={onPaymentTypeChange}
                                     name="payment_type"
                                     isRequired
-                                    defaultValue={paymentTypeDefaultValue[0]}
+                                    // defaultValue={paymentTypeDefaultValue[0]}
                                     placeholder={getFormattedMessage(
                                         "select.payment-type.label"
                                     )}
@@ -325,6 +326,15 @@ const CashPaymentModel = (props) => {
                     type="button"
                     className="btn btn-primary"
                     onClick={(event) => {
+                        if ((cashPaymentValue?.payment_status?.value === 1 && !paymentValue?.payment_type.value)){
+                            dispatch(
+                                    addToast({
+                                        text: "Choose payment Type",
+                                        type: toastType.ERROR,
+                                    })
+                                );
+                            return;
+                        } 
                         if (cashPaymentValue.received_amount !== undefined) {
                             if (
                                 parseInt(cashPaymentValue.received_amount) <
@@ -352,6 +362,16 @@ const CashPaymentModel = (props) => {
                     type="button"
                     className="btn btn-primary"
                     onClick={(event) => {
+                        if ((cashPaymentValue?.payment_status?.value === 1 && !paymentValue?.payment_type.value)){
+                            dispatch(
+                                    addToast({
+                                        text: "Choose payment Type",
+                                        type: toastType.ERROR,
+                                    })
+                                );
+                            return;
+                        } 
+
                         if (cashPaymentValue.received_amount !== undefined) {
                             if (
                                 parseInt(cashPaymentValue.received_amount) <

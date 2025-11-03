@@ -1,0 +1,33 @@
+#/ radius settings
+
+sudo apt update
+sudo apt install freeradius freeradius-mysql -y
+
+sudo mysql -u root -p
+CREATE DATABASE radius;
+EXIT;
+
+sudo cat /etc/freeradius/3.0/mods-config/sql/main/mysql/schema.sql | mysql -u root -p radius
+
+sudo mysql -u root -p
+CREATE DATABASE radius;
+CREATE USER 'radius'@'localhost' IDENTIFIED BY 'Malik@123456!';
+GRANT ALL PRIVILEGES ON radius.* TO 'radius'@'localhost';
+FLUSH PRIVILEGES;
+
+- dialect = "sqlite"
++ dialect = "mysql"
+- driver = "rlm_sql_null"
++ driver = "rlm_sql_mysql"
+mysql {
+    server = "localhost"
+    port = 3306
+    login = "radius"
+    password = "malik@321@!"
+    radius_db = "radius"
+
+    # Optional
+    read_clients = yes
+    client_table = "nas"
+}
+# disable ssl

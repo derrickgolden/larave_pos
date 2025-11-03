@@ -23,6 +23,7 @@ const ProductSearchbar = (props) => {
         posSearchCodeProduct,
         posSearchNameProduct,
         selectedOption,
+        setSearchResults,
     } = props;
     const [searchString, setSearchString] = useState("");
     const [keyDown, setKeyDown] = useState(false);
@@ -32,10 +33,10 @@ const ProductSearchbar = (props) => {
     );
     const filterProduct = posAllProducts
         .filter((qty) => qty.attributes.stock.quantity > 0)
-        .map((item) => ({
+        .map((item) => ({...item,
             name: item.attributes.name,
             code: item.attributes.code,
-            id: item.id,
+            // id: item.id,
         }));
 
     const formatResult = (item) => {
@@ -162,7 +163,8 @@ const ProductSearchbar = (props) => {
         }
     };
 
-    const handleOnSearch = (string) => {
+    const handleOnSearch = (string, results) => {
+        setSearchResults(results);
         if (string.trim() !== "") {
             setSearchString(string);
             const codeSearch = posAllProducts.filter(

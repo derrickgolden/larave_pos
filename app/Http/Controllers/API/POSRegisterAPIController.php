@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class POSRegisterAPIController extends AppBaseController
 {
@@ -162,7 +163,8 @@ class POSRegisterAPIController extends AppBaseController
                 $query->where('payment_type', Sale::CASH);
             })
             ->sum('grand_total');
-
+        
+            // Log::info("POSRegisterAPIController info", $data);
         return $data;
     }
 }

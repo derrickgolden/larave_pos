@@ -60,6 +60,7 @@ const ProductDetailsModel = (props) => {
         setDiscountLimit((obj) =>({
             fixed: {value:2, limit: product.product_discount, label: `(Max: ${frontSetting?.value?.currency_symbol} ${product.product_discount})`},
             percentage: {value:1, limit: pc_discount, label: `(Max: ${pc_discount}%)`},
+            label: `(Max: ${frontSetting?.value?.currency_symbol} ${product.product_discount} or ${pc_discount}%)`
         }))
     }, []);
 
@@ -154,6 +155,7 @@ const ProductDetailsModel = (props) => {
     } : {value: 2, label: getFormattedMessage("discount-type.filter.fixed.label")} || product.discount_type === 2 ? {value: 2, label: getFormattedMessage("discount-type.filter.fixed.label")} : {
         value: 1, label: getFormattedMessage("discount-type.filter.percentage.label")
     });
+
     const onDiscountTypeChange = (obj) => {
         setDiscountType(obj);
     };
@@ -271,7 +273,7 @@ const ProductDetailsModel = (props) => {
                         </div>
                         <Form.Group className='col-md-12 mb-3' controlId='formBasicDiscount'>
                             <Form.Label>{getFormattedMessage('globally.detail.discount')}: {
-                                Number(discountType.value) === 1? discountLimit.percentage.label : discountLimit.fixed.label
+                                discountLimit.label 
                             }</Form.Label>
                             <Form.Control type='text' 
                                 name='discount' min='0'

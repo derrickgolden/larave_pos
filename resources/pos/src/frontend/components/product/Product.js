@@ -28,6 +28,7 @@ const Product = (props) => {
         selectedOption,
         allConfigData,
         isLoading,
+        searchResults,
     } = props;
     const [updateProducts, setUpdateProducts] = useState([]);
     const [play] = useSound(
@@ -104,11 +105,17 @@ const Product = (props) => {
         return cartProductIds.includes(productId);
     };
 
-    const posFilterProduct =
+    const posFilterProduct = searchResults?.length ? (
+        searchResults &&
+        searchResults.filter(
+            (product) => product.attributes.stock.quantity > 0.0
+        )
+    ) : (
         posAllProducts &&
         posAllProducts.filter(
             (product) => product.attributes.stock.quantity > 0.0
-        );
+        )
+    )
     //Cart Item Array
     const loadAllProduct = (product, index) => {
         const findDifferentWords = (str1, str2) => {

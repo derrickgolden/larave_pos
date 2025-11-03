@@ -19,6 +19,7 @@
         <th style="width: 200%">{{ __('messages.pdf.status') }}</th>
         <th style="width: 200%">{{ __('messages.pdf.total') }}</th>
         <th style="width: 300%">{{ __('messages.pdf.received_amount') }}</th>
+        <th style="width: 300%">{{ __('messages.pdf.payment_type') }}</th>
         <th style="width: 300%">{{ __('messages.pdf.payment_status') }}</th>
     </tr>
     </thead>
@@ -37,6 +38,17 @@
             @endif
             <td style="float: left">{{number_format($sale->grand_total,2)}}</td>
             <td>{{number_format((float)$sale->payments->sum('amount'), 2)}}</td>
+            <td>
+                @if($sale->payment_status != 2 && $sale->payment_type == 1)
+                    Cash
+                @elseif($sale->payment_status != 2 && $sale->payment_type == 2)
+                    Cheque
+                @elseif($sale->payment_status != 2 && $sale->payment_type == 3)
+                    Bank Transfer
+                @elseif($sale->payment_status != 2 && $sale->payment_type == 4)
+                    Other
+                @endif
+            </td>
             @if($sale->status == \App\Models\Sale::PAID)
                 <td>paid</td>
             @elseif($sale->status == \App\Models\Sale::UNPAID)

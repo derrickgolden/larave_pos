@@ -195,6 +195,10 @@ mark, .mark {
   background-color: #fcf8e3;
 }
 
+.search-bar .wrapper div:nth-child(2){
+  display: none !important;
+}
+
 sub,
 sup {
   position: relative;

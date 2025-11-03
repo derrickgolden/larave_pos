@@ -105,7 +105,8 @@ const PosMainPage = (props) => {
         },
     });
     const [errors, setErrors] = useState({ notes: "" });
-    // const [searchString, setSearchString] = useState('');
+    const [searchString, setSearchString] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const [changeReturn, setChangeReturn] = useState(0);
     const [showCloseDetailsModal, setShowCloseDetailsModal] = useState(false);
     const [showPosRegisterModel, setShowPosRegisterModel] = useState(false)
@@ -258,7 +259,7 @@ const PosMainPage = (props) => {
         };
     });
     const [paymentValue, setPaymentValue] = useState({
-        payment_type: paymentTypeDefaultValue[0],
+        payment_type: {},
     });
 
     const onPaymentTypeChange = (obj) => {
@@ -354,6 +355,9 @@ const PosMainPage = (props) => {
                 value: 1,
             },
         });
+
+        setPaymentValue({payment_type: {}});
+
         setCashPayment(!cashPayment);
     };
 
@@ -383,6 +387,7 @@ const PosMainPage = (props) => {
     };
 
     const updateCart = (cartProducts) => {
+        setSearchResults([]);
         setUpdateProducts(cartProducts);
     };
 
@@ -487,6 +492,7 @@ const PosMainPage = (props) => {
                 },
             });
             setCartProductIds("");
+            setPaymentValue({payment_type: {}});
         }
     };
 
@@ -742,8 +748,9 @@ const PosMainPage = (props) => {
                                 setUpdateProducts={setUpdateProducts}
                                 updateProducts={updateProducts}
                                 selectedOption={selectedOption}
-                            // handleOnSelect={handleOnSelect} handleOnSearch={handleOnSearch}
-                            // searchString={searchString}
+                                setSearchResults={setSearchResults}
+                                // handleOnSelect={handleOnSelect} handleOnSearch={handleOnSearch}
+                                searchString={searchString}
                             />
                             <HeaderAllButton
                                 holdListData={holdListData}
@@ -779,6 +786,7 @@ const PosMainPage = (props) => {
                                 settings={settings}
                                 productMsg={productMsg}
                                 selectedOption={selectedOption}
+                                searchResults={searchResults}
                             />
                         </div>
                     </div>
@@ -816,6 +824,7 @@ const PosMainPage = (props) => {
                     paymentTypeFilterOptions={paymentTypeFilterOptions}
                     onChangeReturnChange={onChangeReturnChange}
                     setPaymentValue={setPaymentValue}
+                    paymentValue={paymentValue}
                 />
             )}
             {lgShow && (

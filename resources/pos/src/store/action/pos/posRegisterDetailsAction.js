@@ -81,12 +81,14 @@ export const getAllRegisterDetailsAction = () => async (dispatch) => {
     apiConfig
         .get(apiBaseURL.GET_REGISTER_DETAILS)
         .then((response) => {
+            console.log({response: response.data.data});
             dispatch({
                 type: posRegisterDetailsAction.GET_REGISTER_DETAILS,
                 payload: response.data.data,
             });
         })
         .catch(({ response }) => {
+            console.log({error: response.data});
             dispatch(
                 addToast({ text: response.data.message, type: toastType.ERROR })
             );
