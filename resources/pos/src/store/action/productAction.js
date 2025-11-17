@@ -109,6 +109,7 @@ export const addProduct = (product, navigate) => async (dispatch) => {
 export const editProduct =
     (productId, product, navigate) => async (dispatch) => {
         dispatch(setSavingButton(true));
+        console.log({url: apiBaseURL.PRODUCTS + "/" + productId});
         apiConfig
             .post(apiBaseURL.PRODUCTS + "/" + productId, product)
             .then((response) => {

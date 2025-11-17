@@ -48,7 +48,6 @@ const PurchaseReport = (props) => {
     useEffect(() => {
         fetchFrontSetting();
     }, []);
-
     const itemsValue =
         currencySymbol &&
         purchases.length >= 0 &&

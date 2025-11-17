@@ -62,8 +62,8 @@ const Product = (props) => {
         window.location.href = "#/app/purchases/edit/" + id;
     };
 
-    const goToDetailScreen = (ProductId) => {
-        window.location.href = "#/app/purchases/detail/" + ProductId;
+    const goToDetailScreen = (item) => {
+        window.location.href = "#/app/purchases/detail/" + item.id;
     };
 
     const onShowPaymentClick = () => {

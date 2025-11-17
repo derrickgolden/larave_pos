@@ -20,7 +20,8 @@ const EditSubProductModal = (props) => {
         order_tax: "",
         stock_alert: "",
         tax_type: "",
-        code:""
+        code:"",
+        warehouse_id:""
     });
     const [errors, setErrors] = useState({});
     const taxTypeFilterOptions = getFormattedOptions(taxMethodOptions);
@@ -39,9 +40,9 @@ const EditSubProductModal = (props) => {
                 order_tax: productData.order_tax ? productData.order_tax : "",
                 stock_alert: productData.stock_alert,
                 tax_type: productData.tax_type,
-                code: productData.code
+                code: productData.code,
+                warehouse_id: productData.wh_id,
             }));
-            console.log({productData});
         } else {
             setProduct({});
             setFormInput({
@@ -51,7 +52,8 @@ const EditSubProductModal = (props) => {
                 order_tax: "",
                 stock_alert: "",
                 tax_type: "",
-                code:""
+                code:"",
+                warehouse_id:""
             });
             setErrors({});
         }
@@ -117,6 +119,7 @@ const EditSubProductModal = (props) => {
         formData.append('purchase_unit', commonData.purchase_unit);
         formData.append('quantity_limit', commonData.quantity_limit);
         formData.append('main_product_id', commonData.main_product_id);
+        formData.append('warehouse_id', commonData.wh_id);
         formData.append('notes', commonData.notes);
 
         formData.append('code', formInput.code);

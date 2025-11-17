@@ -116,9 +116,6 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         'product_category_id',
         'main_product_id',
         'brand_id',
-        'product_cost',
-        'product_price',
-        'product_discount',
         'product_unit',
         'sale_unit',
         'purchase_unit',
@@ -136,9 +133,6 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
         'product_code' => 'required',
         'product_category_id' => 'required|exists:product_categories,id',
         'brand_id' => 'required|exists:brands,id',
-        'product_cost' => 'required|numeric',
-        'product_price' => 'required|numeric',
-        'product_discount' => 'required|numeric',
         'product_unit' => 'required',
         'sale_unit' => 'nullable',
         'purchase_unit' => 'nullable',
@@ -157,9 +151,6 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     ];
 
     protected $casts = [
-        'product_cost' => 'float',
-        'product_price' => 'float',
-        'product_discount' => 'float',
         'grand_total' => 'float',
         'order_tax' => 'float',
     ];
@@ -205,6 +196,7 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     public function prepareAttributes(): array
     {
         $this->load('variationProduct', 'mainProduct');
+        $price = $this->priceForWarehouse(request('warehouse_id'));
 
         $fields = [
             'name' => $this->name,
@@ -213,9 +205,9 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'main_product_id' => $this->main_product_id,
             'product_category_id' => $this->product_category_id,
             'brand_id' => $this->brand_id,
-            'product_cost' => $this->product_cost,
-            'product_price' => $this->product_price,
-            'product_discount' => $this->product_discount,
+            'product_cost' => $price->product_cost ?? 0,
+            'product_price' => $price->product_price ?? 0,
+            'product_discount' => $price->product_discount ?? 0,
             'product_unit' => $this->product_unit,
             'sale_unit' => $this->sale_unit,
             'purchase_unit' => $this->purchase_unit,
@@ -331,14 +323,15 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
     public function prepareProducts(): array
     {
         $imageUrls = $this->mainProduct->image_url;
+        $price = $this->priceForWarehouse(request('warehouse_id'));
 
         return [
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
             'product_code' => $this->product_code,
-            'price' => $this->product_price,
-            'discount' => $this->product_discount,
+            'price' => $price->product_price ?? 0,
+            'discount' => $price->product_discount ?? 0,
             'sale_unit' => array_values($this->getProductUnitName())[1],
             'remaining_quantity' => $this->stock->quantity ?? 0,
             'images' => $imageUrls['imageUrls'] ?? [],
@@ -347,11 +340,25 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
 
     public function prepareTopSellingReport(): array
     {
+        $warehouseId = request('warehouse_id');
+
+        if ($warehouseId && $warehouseId !== 'null') {
+            $price = $this->warehouseProducts()
+                ->where('warehouse_id', $warehouseId)
+                ->where('product_price', '>', 0)
+                ->first();
+        } else {
+            // Fallback: pick any valid price > 0
+            $price = $this->warehouseProducts()
+                ->orderBy('product_price', 'asc') // optional
+                ->first();
+        }
+
         return [
             'name' => $this->name,
             'total_quantity' => $this->total_quantity,
-            'price' => $this->product_price,
-            'discount' => $this->product_discount,
+            'price' => $price->product_price ?? 0,
+            'discount' => $price->product_discount ?? 0,
             'grand_total' => $this->grand_total,
             'code' => $this->code,
             'product_code' => $this->product_code,
@@ -383,6 +390,26 @@ class Product extends BaseModel implements HasMedia, JsonResourceful
             'warehouses.name'
         )->groupBy('warehouse_id')->get();
     }
+
+    public function warehouseProducts()
+    {
+        return $this->hasMany(WarehouseProduct::class, 'main_product_id', 'id');
+    }
+
+    public function priceForWarehouse($warehouseId)
+    {
+        return $this->warehouseProducts()
+            ->where('warehouse_id', $warehouseId)
+            ->first();
+    }
+
+    public function warehouseProduct()
+    {
+        return $this->hasOne(WarehouseProduct::class, 'product_id', 'id')
+            ->where('warehouse_id', request()->warehouse_id);
+    }
+
+
 
     /**
      * @return mixed

@@ -27,17 +27,19 @@ class ManageStockAPIController extends AppBaseController
         $search = $request->get('search');
         $warehouseId = $request->get('warehouse_id');
         if ($search && $search != 'null') {
-            $stocks = $this->manageStockRepository->whereHas('product.productCategory',
-                function ($query) use ($search) {
-                    $query->where('products.code', 'like', '%'.$search.'%')
-                        ->orWhere('products.name', 'like', '%'.$search.'%')
-                        ->orWhere('products.product_cost', 'like', '%'.$search.'%')
-                        ->orWhere('products.product_price', 'like', '%'.$search.'%')
-                        ->orWhere('products.product_price', 'like', '%'.$search.'%')
-                        ->orWhere('product_categories.name', 'like', '%'.$search.'%');
-                })->where('warehouse_id', $warehouseId)->paginate($perPage);
+            $stocks = $this->manageStockRepository
+                ->where('warehouse_id', $warehouseId)
+                ->whereHas('product', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('product_code', 'like', "%{$search}%");
+                })
+                ->paginate($perPage);
+
         } else {
-            $stocks = $this->manageStockRepository->where('warehouse_id', $warehouseId)->paginate($perPage);
+            $stocks = $this->manageStockRepository
+                ->where('warehouse_id', $warehouseId)
+                ->paginate($perPage);
         }
         ManageStockResource::usingWithCollection();
 

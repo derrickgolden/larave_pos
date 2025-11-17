@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -40,6 +41,7 @@ class MainProductAPIController extends AppBaseController
         $products = $this->mainProductRepository;
 
         if ($request->get('product_unit')) {
+
             $products->where('product_unit', $request->get('product_unit'));
         }
 
@@ -56,6 +58,7 @@ class MainProductAPIController extends AppBaseController
         }
 
         if ($request->get('warehouse_id') && $request->get('warehouse_id') != 'null') {
+
             $warehouseId = $request->get('warehouse_id');
             $products->whereHas('stock', function ($q) use ($warehouseId) {
                 $q->where('manage_stocks.warehouse_id', $warehouseId);
@@ -65,7 +68,7 @@ class MainProductAPIController extends AppBaseController
                 },
             ]);
         }
-
+        
         $products = $products->paginate($perPage);
         MainProductResource::usingWithCollection();
 

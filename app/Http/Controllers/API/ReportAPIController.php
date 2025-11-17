@@ -24,6 +24,7 @@ use App\Models\ManageStock;
 use App\Models\POSRegister;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\WarehouseProduct;
 use App\Models\PurchaseReturn;
 use App\Models\Sale;
 use App\Models\SaleReturn;
@@ -553,33 +554,85 @@ class ReportAPIController extends AppBaseController
         $data['Revenue'] = $data['sales'] - $data['sale_returns'];
         $data['payments_received'] = $data['sales_payment_amount'] + $data['purchase_returns'];
 
-        $productCost = 0;
-        $productItemCost = 0;
+        
+// ... other uses
 
-        $sales = Sale::whereBetween(
-            'date',
-            [$request->get('start_date'), $request->get('end_date')]
-        )->with('saleItems')->get();
+// inside getProfitLossReport(...) replace the two loops with:
 
-        $allSaleReturnsItems = SaleReturnItem::join('sales_return', 'sales_return.id', '=', 'sale_return_items.sale_return_id')
-            ->join('sales', 'sales.id', '=', 'sales_return.sale_id')
-            ->whereBetween('sales.date', [$request->get('start_date'), $request->get('end_date')])
-            ->select('sale_return_items.quantity', 'sale_return_items.product_id')
-            ->with('product')
-            ->get();
+$productCost = 0;
+$productItemCost = 0;
 
+$sales = Sale::whereBetween(
+    'date',
+    [$request->get('start_date'), $request->get('end_date')]
+)->with('saleItems', 'saleItems.product', 'saleItems.product.mainProduct')->get();
 
-        foreach ($sales as $sale) {
-            foreach ($sale->saleItems as $saleItem) {
-                $productCost = $productCost + ($saleItem->product->product_cost * $saleItem->quantity);
-            }
+// get all sale return items with product and their mainProduct loaded
+$allSaleReturnsItems = SaleReturnItem::join('sales_return', 'sales_return.id', '=', 'sale_return_items.sale_return_id')
+    ->join('sales', 'sales.id', '=', 'sales_return.sale_id')
+    ->whereBetween('sales.date', [$request->get('start_date'), $request->get('end_date')])
+    ->select('sale_return_items.quantity', 'sale_return_items.product_id', 'sales.warehouse_id as sale_warehouse_id')
+    ->with('product', 'product.mainProduct')
+    ->get();
+
+/**
+ * helper closure to resolve unit cost for a product in a given warehouse
+ */
+$getUnitCost = function ($product, $warehouseId) {
+    // product is App\Models\Product
+    $mainProductId = $product->main_product_id ?? null;
+
+    if ($mainProductId) {
+        // try exact warehouse pivot row first
+        $pivot = WarehouseProduct::where('main_product_id', $mainProductId)
+            ->where('warehouse_id', $warehouseId)
+            ->first();
+
+        if ($pivot && (float)$pivot->product_cost > 0) {
+            return (float)$pivot->product_cost;
         }
 
-        foreach ($allSaleReturnsItems as $saleReturn) {
-            $productItemCost = $productItemCost + ($saleReturn->product->product_cost * $saleReturn->quantity);
-        }
+        // fallback: first pivot row for this main product with non-zero cost
+        $pivot = WarehouseProduct::where('main_product_id', $mainProductId)
+            ->where('product_cost', '>', 0)
+            ->orderBy('product_cost', 'asc')
+            ->first();
 
-        $data['product_cost'] = $productCost - $productItemCost;
+        if ($pivot) {
+            return (float)$pivot->product_cost;
+        }
+    }
+
+    // last fallback: product table field (if you still have it)
+    return (float) ($product->product_cost ?? 0);
+};
+
+// compute total product cost on sales
+foreach ($sales as $sale) {
+    // prefer sale's warehouse id (assumes Sale model has warehouse_id)
+    $saleWarehouseId = $sale->warehouse_id ?? null;
+
+    foreach ($sale->saleItems as $saleItem) {
+        $product = $saleItem->product;
+
+        // determine unit cost for this product in this sale's warehouse
+        $unitCost = $getUnitCost($product, $saleWarehouseId);
+
+        $productCost += ($unitCost * $saleItem->quantity);
+    }
+}
+
+// compute total cost for sale returns (subtract later)
+foreach ($allSaleReturnsItems as $saleReturn) {
+    $product = $saleReturn->product;
+    $warehouseId = $saleReturn->sale_warehouse_id ?? null;
+
+    $unitCost = $getUnitCost($product, $warehouseId);
+
+    $productItemCost += ($unitCost * $saleReturn->quantity);
+}
+
+$data['product_cost'] = $productCost - $productItemCost;
 
         $data['gross_profit'] = $data['sales'] - $data['product_cost'] - $data['sale_returns'];
 

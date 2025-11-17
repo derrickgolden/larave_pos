@@ -126,4 +126,11 @@ class Warehouse extends BaseModel
         return $this->belongsToMany(Role::class, 'role_warehouse');
     }
 
+    public function pricedProducts()
+    {
+        return $this->belongsToMany(MainProduct::class, 'warehouse_products', 'warehouse_id', 'main_product_id')
+                    ->withPivot(['product_cost', 'product_price', 'product_discount'])
+                    ->withTimestamps();
+    }
+
 }

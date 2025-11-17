@@ -41,13 +41,13 @@ const ProductDetail = (props) => {
     useEffect(() => {
         fetchMainProduct(id);
     }, []);
-
     const sliderImage =
         product &&
         product.attributes &&
         product.attributes.images.imageUrls &&
         product.attributes.images.imageUrls.map((img) => img);
     const allProducts = product && product.attributes && product.attributes.products && product.attributes.products.map((item) => item);
+    const warehouse_prod_details = product && product.attributes && product.attributes.warehouse_prod_details;
 
     const commonDataForNewProduct = {
         name: allProducts && allProducts[0].name,
@@ -76,8 +76,8 @@ const ProductDetail = (props) => {
         setIsDelete(isDelete);
     };
 
-    const openEditSubProductModal = (data) => {
-        setProductData(data);
+    const openEditSubProductModal = (data, detail) => {
+        setProductData({...data, ...detail});
         setShowEditSubProductModal(true);
     }
 
@@ -223,138 +223,146 @@ const ProductDetail = (props) => {
                         </Button>
                     </div>
                 }
-                <div>
-                    <Table responsive="md">
-                        <thead>
-                            <tr>
-                                {product.attributes.product_type == 2 &&
-                                    <th>
-                                        {getFormattedMessage(
-                                            "variations.title"
-                                        )}
-                                    </th>
-                                }
-                                <th>
-                                    {getFormattedMessage(
-                                        "product.product-details.cost.label"
-                                    )}
-                                </th>
-                                <th>
-                                    {getFormattedMessage(
-                                        "product.table.price.column.label"
-                                    )}
-                                </th>
-                                <th>
-                                    Discount
-                                </th>
+                {
+                    warehouse_prod_details && warehouse_prod_details.length !== 0 && warehouse_prod_details.map((detail, index) =>(
 
-                                <th>
-                                    {getFormattedMessage(
-                                        "product.product-details.tax.label"
-                                    )}
-                                </th>
-                                <th>
-                                    {getFormattedMessage(
-                                        "product.input.stock-alert.label"
-                                    )}
-                                </th>
-                                <th className="text-center">
-                                    {getFormattedMessage(
-                                        "react-data-table.action.column.label"
-                                    )}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {allProducts && allProducts.map((data, index) =>
+                        <div key={index}>
+                            <HeaderTitle
+                                title={detail.wh_name}
+                            />
+                            <Table responsive="md">
+                                <thead>
+                                    <tr>
+                                        {product.attributes.product_type == 2 &&
+                                            <th>
+                                                {getFormattedMessage(
+                                                    "variations.title"
+                                                )}
+                                            </th>
+                                        }
+                                        <th>
+                                            {getFormattedMessage(
+                                                "product.product-details.cost.label"
+                                            )}
+                                        </th>
+                                        <th>
+                                            {getFormattedMessage(
+                                                "product.table.price.column.label"
+                                            )}
+                                        </th>
+                                        <th>
+                                            Discount
+                                        </th>
 
-                                <tr key={index}>
-                                    {product.attributes.product_type == 2 &&
-                                        <td className="py-4">
-                                            {`${data.variation_product.variation_name}(${data.variation_product.variation_type_name})`}
-                                        </td>
-                                    }
-                                    <td className="py-4">
-                                        {currencySymbolHandling(
-                                            allConfigData,
-                                            frontSetting.value &&
-                                            frontSetting.value
-                                                .currency_symbol,
-                                            data.product_cost
-                                        )}
-                                    </td>
-                                    <td className="py-4">
-                                        {currencySymbolHandling(
-                                            allConfigData,
-                                            frontSetting.value &&
-                                            frontSetting.value
-                                                .currency_symbol,
-                                            data.product_price
-                                        )}
-                                    </td>
-                                    <td className="py-4">
-                                        {currencySymbolHandling(
-                                            allConfigData,
-                                            frontSetting.value &&
-                                            frontSetting.value
-                                                .currency_symbol,
-                                            data.product_discount
-                                        )}
-                                    </td>
+                                        <th>
+                                            {getFormattedMessage(
+                                                "product.product-details.tax.label"
+                                            )}
+                                        </th>
+                                        <th>
+                                            {getFormattedMessage(
+                                                "product.input.stock-alert.label"
+                                            )}
+                                        </th>
+                                        <th className="text-center">
+                                            {getFormattedMessage(
+                                                "react-data-table.action.column.label"
+                                            )}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {allProducts && allProducts.map((data, index) =>
 
-                                    <td className="py-4">
-                                        {data.order_tax
-                                            ? data.order_tax
-                                            : 0}
-                                        %
-                                    </td>
-                                    <td className="py-4">
-                                        {data.stock_alert && data.stock_alert !== 'null' ? data.stock_alert :  0}
-                                    </td>
-                                    <td className="py-4">
-                                        <div className="text-center">
-                                            <button title={placeholderText('globally.view.tooltip.label')}
-                                                className='btn text-success px-2 fs-3 ps-0 border-0'
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    openWareHouseDetailModal(data)
-                                                }}>
-                                                <FontAwesomeIcon icon={faEye} />
-                                            </button>
-                                            <button title={placeholderText('globally.view.tooltip.label')}
-                                                className='btn text-primary px-2 fs-3 ps-0 border-0'
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    openEditSubProductModal(data)
-                                                }}>
-                                                <FontAwesomeIcon icon={faEdit} />
-                                            </button>
-                                            {product.attributes.product_type == 2 && allProducts.length > 1 &&
-                                                <button title={placeholderText('globally.delete.tooltip.label')}
-                                                    className='btn text-danger px-2 fs-3 ps-0 border-0'
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        onClickDeleteModel(data);
-                                                    }}
-                                                >
-                                                    <FontAwesomeIcon icon={faTrash} />
-                                                </button>
+                                        <tr key={index}>
+                                            {product.attributes.product_type == 2 &&
+                                                <td className="py-4">
+                                                    {`${data.variation_product.variation_name}(${data.variation_product.variation_type_name})`}
+                                                </td>
                                             }
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </Table>
-                    <DeleteProduct
-                        onClickDeleteModel={onClickDeleteModel}
-                        deleteModel={deleteModel}
-                        onDelete={isDelete}
-                    />
-                    <CreateSubProductModal show={showCreateSubProductModal} setShow={setShowCreateSubProductModal} commonData={commonDataForNewProduct} />
-                    <EditSubProductModal show={showEditSubProductModal} setShow={setShowEditSubProductModal} productData={productData} />
-                    <WareHouseDetailsModal show={showWarehouseModal} productData={productData} setShow={setShowWarehouseModal} />
-                </div>
+                                            <td className="py-4">
+                                                {currencySymbolHandling(
+                                                    allConfigData,
+                                                    frontSetting.value &&
+                                                    frontSetting.value
+                                                        .currency_symbol,
+                                                    detail.product_cost
+                                                )}
+                                            </td>
+                                            <td className="py-4">
+                                                {currencySymbolHandling(
+                                                    allConfigData,
+                                                    frontSetting.value &&
+                                                    frontSetting.value
+                                                        .currency_symbol,
+                                                    detail.product_price
+                                                )}
+                                            </td>
+                                            <td className="py-4">
+                                                {currencySymbolHandling(
+                                                    allConfigData,
+                                                    frontSetting.value &&
+                                                    frontSetting.value
+                                                        .currency_symbol,
+                                                    detail.product_discount
+                                                )}
+                                            </td>
+
+                                            <td className="py-4">
+                                                {data.order_tax
+                                                    ? data.order_tax
+                                                    : 0}
+                                                %
+                                            </td>
+                                            <td className="py-4">
+                                                {data.stock_alert && data.stock_alert !== 'null' ? data.stock_alert :  0}
+                                            </td>
+                                            <td className="py-4">
+                                                <div className="text-center">
+                                                    <button title={placeholderText('globally.view.tooltip.label')}
+                                                        className='btn text-success px-2 fs-3 ps-0 border-0'
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            openWareHouseDetailModal(data)
+                                                        }}>
+                                                        <FontAwesomeIcon icon={faEye} />
+                                                    </button>
+                                                    <button title={placeholderText('globally.view.tooltip.label')}
+                                                        className='btn text-primary px-2 fs-3 ps-0 border-0'
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            openEditSubProductModal(data, detail)
+                                                        }}>
+                                                        <FontAwesomeIcon icon={faEdit} />
+                                                    </button>
+                                                    {product.attributes.product_type == 2 && allProducts.length > 1 &&
+                                                        <button title={placeholderText('globally.delete.tooltip.label')}
+                                                            className='btn text-danger px-2 fs-3 ps-0 border-0'
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                onClickDeleteModel(data);
+                                                            }}
+                                                        >
+                                                            <FontAwesomeIcon icon={faTrash} />
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </Table>
+                            <DeleteProduct
+                                onClickDeleteModel={onClickDeleteModel}
+                                deleteModel={deleteModel}
+                                onDelete={isDelete}
+                            />
+                            <CreateSubProductModal show={showCreateSubProductModal} setShow={setShowCreateSubProductModal} commonData={commonDataForNewProduct} />
+                            <EditSubProductModal show={showEditSubProductModal} setShow={setShowEditSubProductModal} productData={productData} />
+                            <WareHouseDetailsModal show={showWarehouseModal} productData={productData} setShow={setShowWarehouseModal} />
+                        </div>
+                    ))
+                }
             </div>}
         </MasterLayout>
     );

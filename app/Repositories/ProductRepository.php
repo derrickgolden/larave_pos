@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
+use App\Models\WarehouseProduct;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
@@ -86,6 +87,18 @@ class ProductRepository extends BaseRepository
             $reference_code = 'PR_' . $product->id;
             $this->generateBarcode($input, $reference_code);
             $product['barcode_image_url'] = Storage::url('product_barcode/barcode-' . $reference_code . '.png');
+
+             WarehouseProduct::updateOrCreate(
+                [
+                    'main_product_id' => $product->main_product_id,
+                    'warehouse_id'    => $input['purchase_warehouse_id'], // you already send this
+                ],
+                [
+                    'product_cost'     => $input['product_cost'] ?? 0,
+                    'product_price'    => $input['product_price'] ?? 0,
+                    'product_discount' => $input['product_discount'] ?? 0,
+                ]
+            );
 
             // create purchase
 
@@ -190,6 +203,18 @@ class ProductRepository extends BaseRepository
         try {
             DB::beginTransaction();
             $product = $this->update($input, $id);
+
+            // Update or create pivot in one line
+            $mainProduct = $product->mainProduct;
+            if (isset($input['warehouse_id'])) {
+                $mainProduct->warehouseProducts()->syncWithoutDetaching([
+                    $input['warehouse_id'] => [
+                        'product_cost'     => $input['product_cost'] ?? 0,
+                        'product_price'    => $input['product_price'] ?? 0,
+                        'product_discount' => $input['product_discount'] ?? 0,
+                    ]
+                ]);
+            }
 
             $product->clearMediaCollection(Product::PRODUCT_BARCODE_PATH);
             $reference_code = 'PR_' . $product->id;

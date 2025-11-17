@@ -129,7 +129,7 @@ const Product = (props) => {
             };
         });
 
-    const columns = [
+        const columns = [
         {
             name: getFormattedMessage("product.title"),
             sortField: "name",
@@ -195,11 +195,6 @@ const Product = (props) => {
             selector: (row) => row.brand_name,
             sortField: "brand_name",
             sortable: false,
-        },
-        {
-            name: getFormattedMessage("product.table.price.column.label"),
-
-            selector: (row) => row.product_price,
         },
         {
             name: getFormattedMessage("product.input.product-unit.label"),

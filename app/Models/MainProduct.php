@@ -77,6 +77,27 @@ class MainProduct extends Model implements HasMedia, JsonResourceful
             }),
         ];
 
+        // Preload warehouse pivot relations so no repeated queries
+        $productWarehouses = $this->warehouseProducts->keyBy('id');
+
+        // Return all warehouses, even those without pivot data
+        $fields['warehouse_prod_details'] = Warehouse::all()->map(function ($warehouse) use ($productWarehouses) {
+
+            // Check if this product has a pivot row for this warehouse
+            $pivot = $productWarehouses->has($warehouse->id)
+                ? $productWarehouses[$warehouse->id]->pivot
+                : null;
+
+            return [
+                'wh_id'   => $warehouse->id,
+                'wh_name' => $warehouse->name,
+                'product_cost'     => $pivot->product_cost     ?? 0,
+                'product_price'    => $pivot->product_price    ?? 0,
+                'product_discount' => $pivot->product_discount ?? 0,
+            ];
+        });
+
+
         if ($this->product_type == self::VARIATION_PRODUCT) {
             $fields['variation'] = $this->variations->prepareAttributes();
             $fields['variation_types'] = $this->variationTypes->map(function ($variationType) {
@@ -133,4 +154,17 @@ class MainProduct extends Model implements HasMedia, JsonResourceful
 
         return '';
     }
+
+    public function warehouseProducts()
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouse_products', 'main_product_id', 'warehouse_id')
+                    ->withPivot(['product_cost', 'product_price', 'product_discount'])
+                    ->withTimestamps();
+    }
+
+    // public function warehouseProducts()
+    // {
+    //     return $this->hasMany(WarehouseProduct::class, 'main_product_id', 'id');
+    // }
+
 }

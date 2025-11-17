@@ -5,7 +5,7 @@ import moment from 'moment';
 import { InputGroup, Table } from 'react-bootstrap-v5';
 import { searchPurchaseProduct } from '../../store/action/purchaseProductAction';
 import { editPurchase } from '../../store/action/purchaseAction';
-import { fetchAllProducts } from '../../store/action/productAction';
+import { fetchAllProducts, fetchProductsByWarehouse  } from '../../store/action/productAction';
 import PurchaseTable from '../../shared/components/purchase/PurchaseTable';
 import { preparePurchaseProductArray } from '../../shared/prepareArray/preparePurchaseArray';
 import { decimalValidate, getFormattedMessage, placeholderText, onFocusInput, getFormattedOptions } from '../../shared/sharedMethod';
@@ -27,6 +27,7 @@ const PurchaseForm = ( props ) => {
         singlePurchase,
         warehouses,
         suppliers,
+        fetchProductsByWarehouse,
         fetchAllProducts,
         products, frontSetting, allConfigData
     } = props;
@@ -64,6 +65,8 @@ const PurchaseForm = ( props ) => {
         status_id: ''
     } );
 
+    console.log({products});
+
     useEffect( () => {
         setUpdateProducts( updateProducts );
     }, [ updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit ] );
@@ -79,7 +82,8 @@ const PurchaseForm = ( props ) => {
     }, [] );
 
     useEffect( () => {
-        purchaseValue.warehouse_id.value ? fetchAllProducts() : null
+        purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value) : null
+        // purchaseValue.warehouse_id.value ? fetchAllProducts(purchaseValue.warehouse_id.value) : null
     }, [ purchaseValue.warehouse_id ] )
 
     const handleValidation = () => {
@@ -396,4 +400,4 @@ const mapStateToProps = ( state ) => {
     return { customProducts: preparePurchaseProductArray( products ), purchaseProducts, products, frontSetting, allConfigData }
 };
 
-export default connect( mapStateToProps, { editPurchase, fetchAllProducts, searchPurchaseProduct, } )( PurchaseForm );
+export default connect( mapStateToProps, { editPurchase, fetchAllProducts, fetchProductsByWarehouse, searchPurchaseProduct, } )( PurchaseForm );

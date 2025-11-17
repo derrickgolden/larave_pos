@@ -346080,7 +346080,8 @@ var EditSubProductModal = function EditSubProductModal(props) {
       order_tax: "",
       stock_alert: "",
       tax_type: "",
-      code: ""
+      code: "",
+      warehouse_id: ""
     }),
     _useState4 = _slicedToArray(_useState3, 2),
     formInput = _useState4[0],
@@ -346103,11 +346104,9 @@ var EditSubProductModal = function EditSubProductModal(props) {
           order_tax: productData.order_tax ? productData.order_tax : "",
           stock_alert: productData.stock_alert,
           tax_type: productData.tax_type,
-          code: productData.code
+          code: productData.code,
+          warehouse_id: productData.wh_id
         });
-      });
-      console.log({
-        productData: productData
       });
     } else {
       setProduct({});
@@ -346118,7 +346117,8 @@ var EditSubProductModal = function EditSubProductModal(props) {
         order_tax: "",
         stock_alert: "",
         tax_type: "",
-        code: ""
+        code: "",
+        warehouse_id: ""
       });
       setErrors({});
     }
@@ -346176,6 +346176,7 @@ var EditSubProductModal = function EditSubProductModal(props) {
     formData.append('purchase_unit', commonData.purchase_unit);
     formData.append('quantity_limit', commonData.quantity_limit);
     formData.append('main_product_id', commonData.main_product_id);
+    formData.append('warehouse_id', commonData.wh_id);
     formData.append('notes', commonData.notes);
     formData.append('code', formInput.code);
     formData.append('product_price', formInput.product_price);
@@ -347257,11 +347258,6 @@ var Product = function Product(props) {
     sortField: "brand_name",
     sortable: false
   }, {
-    name: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_10__.getFormattedMessage)("product.table.price.column.label"),
-    selector: function selector(row) {
-      return row.product_price;
-    }
-  }, {
     name: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_10__.getFormattedMessage)("product.input.product-unit.label"),
     sortField: "product_unit",
     sortable: true,
@@ -347486,6 +347482,7 @@ var ProductDetail = function ProductDetail(props) {
   var allProducts = product && product.attributes && product.attributes.products && product.attributes.products.map(function (item) {
     return item;
   });
+  var warehouse_prod_details = product && product.attributes && product.attributes.warehouse_prod_details;
   var commonDataForNewProduct = {
     name: allProducts && allProducts[0].name,
     product_code: allProducts && allProducts[0].product_code,
@@ -347516,8 +347513,8 @@ var ProductDetail = function ProductDetail(props) {
     setDeleteModel(!deleteModel);
     setIsDelete(isDelete);
   };
-  var openEditSubProductModal = function openEditSubProductModal(data) {
-    setProductData(data);
+  var openEditSubProductModal = function openEditSubProductModal(data, detail) {
+    setProductData(_objectSpread(_objectSpread({}, data), detail));
     setShowEditSubProductModal(true);
   };
   var openCreateSubProductModal = function openCreateSubProductModal() {
@@ -347627,106 +347624,110 @@ var ProductDetail = function ProductDetail(props) {
           className: "btn-light-primary",
           children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.create.title")
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(react_bootstrap_v5__WEBPACK_IMPORTED_MODULE_20__["default"], {
-          responsive: "md",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("thead", {
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("tr", {
-              children: [product.attributes.product_type == 2 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("variations.title")
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.product-details.cost.label")
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.table.price.column.label")
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: "Discount"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.product-details.tax.label")
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.input.stock-alert.label")
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
-                className: "text-center",
-                children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("react-data-table.action.column.label")
-              })]
-            })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("tbody", {
-            children: allProducts && allProducts.map(function (data, index) {
-              return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("tr", {
-                children: [product.attributes.product_type == 2 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: "".concat(data.variation_product.variation_name, "(").concat(data.variation_product.variation_type_name, ")")
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, data.product_cost)
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, data.product_price)
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, data.product_discount)
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("td", {
-                  className: "py-4",
-                  children: [data.order_tax ? data.order_tax : 0, "%"]
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: data.stock_alert && data.stock_alert !== 'null' ? data.stock_alert : 0
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
-                  className: "py-4",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
-                    className: "text-center",
-                    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
-                      title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.view.tooltip.label'),
-                      className: "btn text-success px-2 fs-3 ps-0 border-0",
-                      onClick: function onClick(e) {
-                        e.stopPropagation();
-                        openWareHouseDetailModal(data);
-                      },
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faEye
-                      })
-                    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
-                      title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.view.tooltip.label'),
-                      className: "btn text-primary px-2 fs-3 ps-0 border-0",
-                      onClick: function onClick(e) {
-                        e.stopPropagation();
-                        openEditSubProductModal(data);
-                      },
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faEdit
-                      })
-                    }), product.attributes.product_type == 2 && allProducts.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
-                      title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.delete.tooltip.label'),
-                      className: "btn text-danger px-2 fs-3 ps-0 border-0",
-                      onClick: function onClick(e) {
-                        e.stopPropagation();
-                        onClickDeleteModel(data);
-                      },
-                      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faTrash
-                      })
-                    })]
-                  })
+      }), warehouse_prod_details && warehouse_prod_details.length !== 0 && warehouse_prod_details.map(function (detail, index) {
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_header_HeaderTitle__WEBPACK_IMPORTED_MODULE_6__["default"], {
+            title: detail.wh_name
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)(react_bootstrap_v5__WEBPACK_IMPORTED_MODULE_20__["default"], {
+            responsive: "md",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("thead", {
+              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("tr", {
+                children: [product.attributes.product_type == 2 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("variations.title")
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.product-details.cost.label")
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.table.price.column.label")
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: "Discount"
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.product-details.tax.label")
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("product.input.stock-alert.label")
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("th", {
+                  className: "text-center",
+                  children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.getFormattedMessage)("react-data-table.action.column.label")
                 })]
-              }, index);
-            })
+              })
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("tbody", {
+              children: allProducts && allProducts.map(function (data, index) {
+                return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("tr", {
+                  children: [product.attributes.product_type == 2 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: "".concat(data.variation_product.variation_name, "(").concat(data.variation_product.variation_type_name, ")")
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, detail.product_cost)
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, detail.product_price)
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.currencySymbolHandling)(allConfigData, frontSetting.value && frontSetting.value.currency_symbol, detail.product_discount)
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("td", {
+                    className: "py-4",
+                    children: [data.order_tax ? data.order_tax : 0, "%"]
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: data.stock_alert && data.stock_alert !== 'null' ? data.stock_alert : 0
+                  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("td", {
+                    className: "py-4",
+                    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+                      className: "text-center",
+                      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
+                        title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.view.tooltip.label'),
+                        className: "btn text-success px-2 fs-3 ps-0 border-0",
+                        onClick: function onClick(e) {
+                          e.stopPropagation();
+                          openWareHouseDetailModal(data);
+                        },
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
+                          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faEye
+                        })
+                      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
+                        title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.view.tooltip.label'),
+                        className: "btn text-primary px-2 fs-3 ps-0 border-0",
+                        onClick: function onClick(e) {
+                          e.stopPropagation();
+                          openEditSubProductModal(data, detail);
+                        },
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
+                          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faEdit
+                        })
+                      }), product.attributes.product_type == 2 && allProducts.length > 1 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("button", {
+                        title: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_8__.placeholderText)('globally.delete.tooltip.label'),
+                        className: "btn text-danger px-2 fs-3 ps-0 border-0",
+                        onClick: function onClick(e) {
+                          e.stopPropagation();
+                          onClickDeleteModel(data);
+                        },
+                        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_12__.FontAwesomeIcon, {
+                          icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_21__.faTrash
+                        })
+                      })]
+                    })
+                  })]
+                }, index);
+              })
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_DeleteProduct__WEBPACK_IMPORTED_MODULE_14__["default"], {
+            onClickDeleteModel: onClickDeleteModel,
+            deleteModel: deleteModel,
+            onDelete: isDelete
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_CreateSubProductModal__WEBPACK_IMPORTED_MODULE_15__["default"], {
+            show: showCreateSubProductModal,
+            setShow: setShowCreateSubProductModal,
+            commonData: commonDataForNewProduct
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_EditSubProductModal__WEBPACK_IMPORTED_MODULE_13__["default"], {
+            show: showEditSubProductModal,
+            setShow: setShowEditSubProductModal,
+            productData: productData
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_WareHouseDetailsModal__WEBPACK_IMPORTED_MODULE_11__["default"], {
+            show: showWarehouseModal,
+            productData: productData,
+            setShow: setShowWarehouseModal
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_DeleteProduct__WEBPACK_IMPORTED_MODULE_14__["default"], {
-          onClickDeleteModel: onClickDeleteModel,
-          deleteModel: deleteModel,
-          onDelete: isDelete
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_CreateSubProductModal__WEBPACK_IMPORTED_MODULE_15__["default"], {
-          show: showCreateSubProductModal,
-          setShow: setShowCreateSubProductModal,
-          commonData: commonDataForNewProduct
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_EditSubProductModal__WEBPACK_IMPORTED_MODULE_13__["default"], {
-          show: showEditSubProductModal,
-          setShow: setShowEditSubProductModal,
-          productData: productData
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_WareHouseDetailsModal__WEBPACK_IMPORTED_MODULE_11__["default"], {
-          show: showWarehouseModal,
-          productData: productData,
-          setShow: setShowWarehouseModal
-        })]
+        }, index);
       })]
     })]
   });
@@ -350513,6 +350514,7 @@ var PurchaseForm = function PurchaseForm(props) {
     singlePurchase = props.singlePurchase,
     warehouses = props.warehouses,
     suppliers = props.suppliers,
+    fetchProductsByWarehouse = props.fetchProductsByWarehouse,
     fetchAllProducts = props.fetchAllProducts,
     products = props.products,
     frontSetting = props.frontSetting,
@@ -350578,6 +350580,9 @@ var PurchaseForm = function PurchaseForm(props) {
     _useState16 = _slicedToArray(_useState15, 2),
     errors = _useState16[0],
     setErrors = _useState16[1];
+  console.log({
+    products: products
+  });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     setUpdateProducts(updateProducts);
   }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -350596,7 +350601,8 @@ var PurchaseForm = function PurchaseForm(props) {
     }
   }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    purchaseValue.warehouse_id.value ? fetchAllProducts() : null;
+    purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value) : null;
+    // purchaseValue.warehouse_id.value ? fetchAllProducts(purchaseValue.warehouse_id.value) : null
   }, [purchaseValue.warehouse_id]);
   var handleValidation = function handleValidation() {
     var errorss = {};
@@ -351030,6 +351036,7 @@ var mapStateToProps = function mapStateToProps(state) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,react_redux__WEBPACK_IMPORTED_MODULE_1__.connect)(mapStateToProps, {
   editPurchase: _store_action_purchaseAction__WEBPACK_IMPORTED_MODULE_4__.editPurchase,
   fetchAllProducts: _store_action_productAction__WEBPACK_IMPORTED_MODULE_5__.fetchAllProducts,
+  fetchProductsByWarehouse: _store_action_productAction__WEBPACK_IMPORTED_MODULE_5__.fetchProductsByWarehouse,
   searchPurchaseProduct: _store_action_purchaseProductAction__WEBPACK_IMPORTED_MODULE_3__.searchPurchaseProduct
 })(PurchaseForm));
 
@@ -351134,8 +351141,8 @@ var Product = function Product(props) {
     var id = item.id;
     window.location.href = "#/app/purchases/edit/" + id;
   };
-  var goToDetailScreen = function goToDetailScreen(ProductId) {
-    window.location.href = "#/app/purchases/detail/" + ProductId;
+  var goToDetailScreen = function goToDetailScreen(item) {
+    window.location.href = "#/app/purchases/detail/" + item.id;
   };
   var onShowPaymentClick = function onShowPaymentClick() {
     setIsShowPaymentModel(!isShowPaymentModel);
@@ -357367,8 +357374,8 @@ var StockReport = function StockReport(props) {
       code: stockReport.attributes.product.code,
       name: stockReport.attributes.product.name,
       product_category_name: stockReport.attributes.product_category_name,
-      product_cost: stockReport.attributes.product.product_cost,
-      product_price: stockReport.attributes.product.product_price,
+      product_cost: stockReport.attributes.product_cost,
+      product_price: stockReport.attributes.product_price,
       product_unit: stockReport.attributes.product_unit_name,
       current_stock: stockReport.attributes.quantity,
       id: stockReport.attributes.product_id,
@@ -393395,6 +393402,9 @@ var editProduct = function editProduct(productId, product, navigate) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
             dispatch((0,_saveButtonAction__WEBPACK_IMPORTED_MODULE_7__.setSavingButton)(true));
+            console.log({
+              url: _constants__WEBPACK_IMPORTED_MODULE_1__.apiBaseURL.PRODUCTS + "/" + productId
+            });
             _config_apiConfigWthFormData__WEBPACK_IMPORTED_MODULE_0__["default"].post(_constants__WEBPACK_IMPORTED_MODULE_1__.apiBaseURL.PRODUCTS + "/" + productId, product).then(function (response) {
               dispatch(fetchMainProduct(product.get('main_product_id'), false));
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_2__.addToast)({
@@ -393409,7 +393419,7 @@ var editProduct = function editProduct(productId, product, navigate) {
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
-          case 2:
+          case 3:
           case "end":
             return _context4.stop();
         }

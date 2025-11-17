@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\Contracts\JsonResourceful;
 use App\Traits\HasJsonResourcefulData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Log;
 
 /**
  * App\Models\ManageStock
@@ -76,8 +75,6 @@ class ManageStock extends BaseModel implements JsonResourceful
 
         static::updating(function ($model) {
             $product = Product::find($model->product_id);
-            Log::info('Updating '.$model->quantity);
-            Log::info('Updating 1 '.$product->stock_alert);
 
             if ($model->quantity <= $product->stock_alert) {
                 $model->alert = true;
@@ -88,8 +85,6 @@ class ManageStock extends BaseModel implements JsonResourceful
 
         static::creating(function ($model) {
             $product = Product::find($model->product_id);
-            Log::info('Creating '.$model->quantity);
-            Log::info('Creating 1 '.$product->stock_alert);
 
             if ($model->quantity <= $product->stock_alert) {
                 $model->alert = true;
@@ -101,6 +96,10 @@ class ManageStock extends BaseModel implements JsonResourceful
 
     public function prepareAttributes(): array
     {
+        $warehouseProduct = $this->product->warehouseProducts()
+            ->where('warehouse_id', $this->warehouse_id)
+            ->first();
+
         return [
             'warehouse_id' => $this->warehouse_id,
             'product_id' => $this->product_id,
@@ -109,6 +108,9 @@ class ManageStock extends BaseModel implements JsonResourceful
             'product' => $this->product,
             'warehouse' => $this->warehouse,
             'product_category_name' => $this->product->productCategory->name,
+            'product_price'         => optional($warehouseProduct)->product_price ?? 0,
+            'product_cost'          => optional($warehouseProduct)->product_cost ?? 0,
+            'product_discount'      => optional($warehouseProduct)->product_discount ?? 0,
         ];
     }
 
