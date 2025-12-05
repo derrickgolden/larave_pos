@@ -164,7 +164,6 @@ class POSRegisterAPIController extends AppBaseController
             })
             ->sum('grand_total');
         
-            // Log::info("POSRegisterAPIController info", $data);
         return $data;
     }
 }

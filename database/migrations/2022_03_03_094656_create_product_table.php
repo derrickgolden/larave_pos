@@ -25,8 +25,8 @@ return new class extends Migration
                 ->on('brands')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->double('product_cost');
-            $table->double('product_price');
+            $table->double('cost');
+            $table->double('price');
             $table->string('product_unit');
             $table->string('sale_unit')->nullable();
             $table->string('purchase_unit')->nullable();

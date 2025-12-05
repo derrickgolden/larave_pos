@@ -173,9 +173,9 @@ export const fetchAllProducts = () => async (dispatch) => {
         });
 };
 
-export const fetchProductsByWarehouse = (id) => async (dispatch) => {
+export const fetchProductsByWarehouse = (id, include_all = 0) => async (dispatch) => {
     apiConfig
-        .get(`products?page[size]=0&warehouse_id=${id}`)
+        .get(`products?page[size]=0&warehouse_id=${id}&include_all=${include_all}`)
         .then((response) => {
             dispatch({
                 type: productActionType.FETCH_PRODUCTS_BY_WAREHOUSE,

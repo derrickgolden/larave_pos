@@ -22,7 +22,6 @@ function RegisterDetailsModel(props) {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getAllRegisterDetailsAction());
-        console.log("Called getAllRegisterDetailsAction");
     }, []);
 
     const onsetLgShow = () => {

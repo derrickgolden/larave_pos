@@ -65,8 +65,6 @@ const PurchaseForm = ( props ) => {
         status_id: ''
     } );
 
-    console.log({products});
-
     useEffect( () => {
         setUpdateProducts( updateProducts );
     }, [ updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit ] );
@@ -82,7 +80,7 @@ const PurchaseForm = ( props ) => {
     }, [] );
 
     useEffect( () => {
-        purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value) : null
+        purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value, 1) : null
         // purchaseValue.warehouse_id.value ? fetchAllProducts(purchaseValue.warehouse_id.value) : null
     }, [ purchaseValue.warehouse_id ] )
 

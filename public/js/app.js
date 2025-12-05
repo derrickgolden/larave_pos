@@ -350580,9 +350580,6 @@ var PurchaseForm = function PurchaseForm(props) {
     _useState16 = _slicedToArray(_useState15, 2),
     errors = _useState16[0],
     setErrors = _useState16[1];
-  console.log({
-    products: products
-  });
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     setUpdateProducts(updateProducts);
   }, [updateProducts, quantity, newCost, newDiscount, newTax, subTotal, newPurchaseUnit]);
@@ -350601,7 +350598,7 @@ var PurchaseForm = function PurchaseForm(props) {
     }
   }, []);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value) : null;
+    purchaseValue.warehouse_id.value ? fetchProductsByWarehouse(purchaseValue.warehouse_id.value, 1) : null;
     // purchaseValue.warehouse_id.value ? fetchAllProducts(purchaseValue.warehouse_id.value) : null
   }, [purchaseValue.warehouse_id]);
   var handleValidation = function handleValidation() {
@@ -381032,7 +381029,6 @@ function RegisterDetailsModel(props) {
   var dispatch = (0,react_redux__WEBPACK_IMPORTED_MODULE_2__.useDispatch)();
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     dispatch((0,_store_action_pos_posRegisterDetailsAction__WEBPACK_IMPORTED_MODULE_3__.getAllRegisterDetailsAction)());
-    console.log("Called getAllRegisterDetailsAction");
   }, []);
   var onsetLgShow = function onsetLgShow() {
     setLgShow(false);
@@ -393035,6 +393031,7 @@ var getAllRegisterDetailsAction = function getAllRegisterDetailsAction() {
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
+            console.log(_constants__WEBPACK_IMPORTED_MODULE_1__.apiBaseURL.GET_REGISTER_DETAILS);
             _config_apiConfig__WEBPACK_IMPORTED_MODULE_0__["default"].get(_constants__WEBPACK_IMPORTED_MODULE_1__.apiBaseURL.GET_REGISTER_DETAILS).then(function (response) {
               console.log({
                 response: response.data.data
@@ -393053,7 +393050,7 @@ var getAllRegisterDetailsAction = function getAllRegisterDetailsAction() {
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
-          case 1:
+          case 2:
           case "end":
             return _context2.stop();
         }
@@ -393493,12 +393490,13 @@ var fetchAllProducts = function fetchAllProducts() {
   }();
 };
 var fetchProductsByWarehouse = function fetchProductsByWarehouse(id) {
+  var include_all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
   return /*#__PURE__*/function () {
     var _ref11 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee7(dispatch) {
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) switch (_context7.prev = _context7.next) {
           case 0:
-            _config_apiConfigWthFormData__WEBPACK_IMPORTED_MODULE_0__["default"].get("products?page[size]=0&warehouse_id=".concat(id)).then(function (response) {
+            _config_apiConfigWthFormData__WEBPACK_IMPORTED_MODULE_0__["default"].get("products?page[size]=0&warehouse_id=".concat(id, "&include_all=").concat(include_all)).then(function (response) {
               dispatch({
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.productActionType.FETCH_PRODUCTS_BY_WAREHOUSE,
                 payload: response.data.data

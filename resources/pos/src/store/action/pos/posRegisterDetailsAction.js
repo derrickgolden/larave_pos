@@ -78,6 +78,7 @@ export const closeRegisterAction = (data, navigate) => (dispatch) => {
 };
 
 export const getAllRegisterDetailsAction = () => async (dispatch) => {
+    console.log(apiBaseURL.GET_REGISTER_DETAILS)
     apiConfig
         .get(apiBaseURL.GET_REGISTER_DETAILS)
         .then((response) => {

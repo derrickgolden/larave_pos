@@ -45,15 +45,38 @@ class ProductAPIController extends AppBaseController
             $products->where('product_unit', $request->get('product_unit'));
         }
 
+        // if ($request->get('warehouse_id') && $request->get('warehouse_id') != 'null') {
+        //     $warehouseId = $request->get('warehouse_id');
+        //     $products->whereHas('stock', function ($q) use ($warehouseId) {
+        //         $q->where('manage_stocks.warehouse_id', $warehouseId);
+        //     })->with([
+        //         'stock' => function (HasOne $query) use ($warehouseId) {
+        //             $query->where('manage_stocks.warehouse_id', $warehouseId);
+        //         },
+        //     ]);
+        // }
+
+
         if ($request->get('warehouse_id') && $request->get('warehouse_id') != 'null') {
             $warehouseId = $request->get('warehouse_id');
-            $products->whereHas('stock', function ($q) use ($warehouseId) {
-                $q->where('manage_stocks.warehouse_id', $warehouseId);
-            })->with([
-                'stock' => function (HasOne $query) use ($warehouseId) {
-                    $query->where('manage_stocks.warehouse_id', $warehouseId);
-                },
-            ]);
+
+            // If include_all = 1 → return all products, but load warehouse stock if exists
+            if ($request->boolean('include_all')) {
+                $products->with([
+                    'stock' => function ($query) use ($warehouseId) {
+                        $query->where('manage_stocks.warehouse_id', $warehouseId);
+                    },
+                ]);
+            } else {
+                // Original logic → only products that HAVE stock in the warehouse
+                $products->whereHas('stock', function ($q) use ($warehouseId) {
+                    $q->where('manage_stocks.warehouse_id', $warehouseId);
+                })->with([
+                    'stock' => function ($query) use ($warehouseId) {
+                        $query->where('manage_stocks.warehouse_id', $warehouseId);
+                    },
+                ]);
+            }
         }
 
         $products = $products->paginate($perPage);
