@@ -30,6 +30,8 @@ export default (state = [], action) => {
             return action.payload;
         case productActionType.EDIT_MAIN_PRODUCT:
             return state.map(item => item.id === +action.payload.id ? action.payload : item);
+        case productActionType.CLEAR_PRODUCTS:
+            return  [];
         default:
             return state;
     }

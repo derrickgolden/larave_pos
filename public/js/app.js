@@ -375367,6 +375367,7 @@ var productActionType = {
   FETCH_BRAND_CLICKABLE: "FETCH_BRAND_CLICKABLE",
   FETCH_ALL_PRODUCTS: "FETCH_ALL_PRODUCTS",
   FETCH_PRODUCTS_BY_WAREHOUSE: "FETCH_PRODUCTS_BY_WAREHOUSE",
+  CLEAR_PRODUCTS: "CLEAR_PRODUCTS",
   REMOVE_ALL_PRODUCTS: "REMOVE_ALL_PRODUCTS",
   ADD_IMPORT_PRODUCT: "ADD_IMPORT_PRODUCT",
   FETCH_ALL_MAIN_PRODUCTS: "FETCH_ALL_MAIN_PRODUCTS",
@@ -393496,6 +393497,9 @@ var fetchProductsByWarehouse = function fetchProductsByWarehouse(id) {
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) switch (_context7.prev = _context7.next) {
           case 0:
+            dispatch({
+              type: _constants__WEBPACK_IMPORTED_MODULE_1__.productActionType.CLEAR_PRODUCTS
+            });
             _config_apiConfigWthFormData__WEBPACK_IMPORTED_MODULE_0__["default"].get("products?page[size]=0&warehouse_id=".concat(id, "&include_all=").concat(include_all)).then(function (response) {
               dispatch({
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.productActionType.FETCH_PRODUCTS_BY_WAREHOUSE,
@@ -393508,7 +393512,7 @@ var fetchProductsByWarehouse = function fetchProductsByWarehouse(id) {
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
-          case 1:
+          case 2:
           case "end":
             return _context7.stop();
         }
@@ -402406,6 +402410,8 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       return state.map(function (item) {
         return item.id === +action.payload.id ? action.payload : item;
       });
+    case _constants__WEBPACK_IMPORTED_MODULE_0__.productActionType.CLEAR_PRODUCTS:
+      return [];
     default:
       return state;
   }
