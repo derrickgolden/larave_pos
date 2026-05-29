@@ -22,6 +22,7 @@ const Login = () => {
     const { frontSetting } = useSelector((state) => state);
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false);
+    const [authError, setAuthError] = useState("");
     const token = localStorage.getItem(Tokens.ADMIN);
 
     const [loginInputs, setLoginInputs] = useState({
@@ -82,8 +83,9 @@ const Login = () => {
         const valid = handleValidation();
         if (valid) {
             setLoading(true);
+            setAuthError("");
             dispatch(
-                loginAction(prepareFormData(loginInputs), navigate, setLoading)
+                loginAction(prepareFormData(loginInputs), navigate, setLoading, setAuthError)
             );
             const dataBlank = {
                 email: "",
@@ -99,6 +101,7 @@ const Login = () => {
             ...inputs,
             [e.target.name]: e.target.value,
         }));
+        setAuthError("");
         setErrors("");
     };
 
@@ -202,6 +205,11 @@ const Login = () => {
                                 </span>
                             </div>
                             <div className="text-center">
+                                {authError ? (
+                                    <div className="alert alert-danger text-start mb-4" role="alert">
+                                        {authError}
+                                    </div>
+                                ) : null}
                                 <button
                                     type="submit"
                                     className="btn btn-primary w-100"

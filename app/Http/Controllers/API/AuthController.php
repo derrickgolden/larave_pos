@@ -73,6 +73,11 @@ class AuthController extends AppBaseController
         if (! Hash::check($password, $user->password)) {
             return $this->sendError(__('messages.error.invalid_username_password'), 422);
         }
+
+        if (! $user->status) {
+            return $this->sendError('Your account is inactive due to payment. Please contact: 0714475702.', 403);
+        }
+
         $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
         unset($user->roles);
         unset($user->permissions);

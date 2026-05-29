@@ -31,20 +31,28 @@ export default {
             error => errorHandler(error)
         );
         const errorHandler = (error) => {
-            if (error.response.status === 401
-                || error.response.data.message === errorMessage.TOKEN_NOT_PROVIDED
-                || error.response.data.message === errorMessage.TOKEN_INVALID
-                || error.response.data.message === errorMessage.TOKEN_INVALID_SIGNATURE
-                || error.response.data.message === errorMessage.TOKEN_EXPIRED) {
+            const status = error?.response?.status;
+            const message = error?.response?.data?.message;
+            const requestUrl = String(error?.config?.url || '');
+
+            if (status === 401
+                || message === errorMessage.TOKEN_NOT_PROVIDED
+                || message === errorMessage.TOKEN_INVALID
+                || message === errorMessage.TOKEN_INVALID_SIGNATURE
+                || message === errorMessage.TOKEN_EXPIRED) {
                 localStorage.removeItem(Tokens.ADMIN);
                 localStorage.removeItem(Tokens.USER);
                 localStorage.removeItem(Tokens.GET_PERMISSIONS);
                 window.location.href = environment.URL + '#' + '/login';
-            }else if(error.response.status === 403 || error.response.status === 404) {
-                window.location.href = environment.URL + '#' + '/app/dashboard';
-            }else {
-                return Promise.reject({...error})
             }
+
+            if (status === 403 || status === 404) {
+                if (!requestUrl.includes('login')) {
+                    window.location.href = environment.URL + '#' + '/app/dashboard';
+                }
+            }
+
+            return Promise.reject({ ...error });
         };
         const successHandler = (response) => {
             return response;

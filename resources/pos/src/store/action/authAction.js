@@ -47,7 +47,24 @@ const mapPermissionToRoute = (permission) => {
     }
 };
 
-export const loginAction = (user, navigate, setLoading) => async (dispatch) => {
+const getApiErrorMessage = (error, fallback = "Something went wrong.") => {
+    const responseData = error?.response?.data;
+    if (responseData?.message) {
+        return responseData.message;
+    }
+    if (responseData?.error) {
+        return responseData.error;
+    }
+    if (responseData?.errors) {
+        const firstErrorKey = Object.keys(responseData.errors)[0];
+        if (firstErrorKey && Array.isArray(responseData.errors[firstErrorKey])) {
+            return responseData.errors[firstErrorKey][0];
+        }
+    }
+    return error?.message || fallback;
+};
+
+export const loginAction = (user, navigate, setLoading, setAuthError) => async (dispatch) => {
     await apiConfig
         .post("login", user)
         .then((response) => {
@@ -120,9 +137,13 @@ export const loginAction = (user, navigate, setLoading) => async (dispatch) => {
                 window.location.reload();
             }
         })
-        .catch(({ response }) => {
+        .catch((error) => {
+            const message = getApiErrorMessage(error, "Invalid email or password.");
+            if (setAuthError) {
+                setAuthError(message);
+            }
             dispatch(
-                addToast({ text: response.data.message, type: toastType.ERROR })
+                addToast({ text: message, type: toastType.ERROR })
             );
             setLoading(false);
         });
@@ -149,9 +170,10 @@ export const logoutAction = (token, navigate) => async (dispatch) => {
                 })
             );
         })
-        .catch(({ response }) => {
+        .catch((error) => {
+            const message = getApiErrorMessage(error);
             dispatch(
-                addToast({ text: response.data.message, type: toastType.ERROR })
+                addToast({ text: message, type: toastType.ERROR })
             );
         });
 };
@@ -172,10 +194,11 @@ export const forgotPassword = (user) => async (dispatch) => {
                 })
             );
         })
-        .catch(({ response }) => {
-            dispatch({ type: toastType.ERROR, payload: response.data.message });
+        .catch((error) => {
+            const message = getApiErrorMessage(error);
+            dispatch({ type: toastType.ERROR, payload: message });
             dispatch(
-                addToast({ text: response.data.message, type: toastType.ERROR })
+                addToast({ text: message, type: toastType.ERROR })
             );
         });
 };
@@ -197,9 +220,10 @@ export const resetPassword = (user, navigate) => async (dispatch) => {
             );
             navigate("/login");
         })
-        .catch(({ response }) => {
+        .catch((error) => {
+            const message = getApiErrorMessage(error);
             dispatch(
-                addToast({ text: response.data.message, type: toastType.ERROR })
+                addToast({ text: message, type: toastType.ERROR })
             );
         });
 };

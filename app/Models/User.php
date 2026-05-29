@@ -70,6 +70,8 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
     use HasApiTokens, HasFactory, Notifiable, HasRoles, InteractsWithMedia, HasJsonResourcefulData;
 
     const JSON_API_TYPE = 'users';
+    public const ACTIVE = 1;
+    public const INACTIVE = 0;
 
     public const PATH = 'user_image';
 
@@ -87,6 +89,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         'phone',
         'password',
         'language',
+        'status',
     ];
 
     public static $rules = [
@@ -97,6 +100,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         'password' => 'required|min:6',
         'confirm_password' => 'required|min:6|same:password',
         'image' => 'image|mimes:jpg,jpeg,png',
+        'status' => 'nullable|boolean',
     ];
 
     public function getImageUrlAttribute(): string
@@ -127,6 +131,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'status' => 'boolean',
     ];
 
     public function prepareLinks(): array
@@ -143,6 +148,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'status' => $this->status,
             'image' => $this->image_url,
             'role' => $this->roles,
             'created_at' => $this->created_at,

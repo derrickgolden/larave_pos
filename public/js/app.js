@@ -337298,27 +337298,31 @@ var Login = function Login() {
     _useState4 = _slicedToArray(_useState3, 2),
     loading = _useState4[0],
     setLoading = _useState4[1];
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(""),
+    _useState6 = _slicedToArray(_useState5, 2),
+    authError = _useState6[0],
+    setAuthError = _useState6[1];
   var token = localStorage.getItem(_constants__WEBPACK_IMPORTED_MODULE_6__.Tokens.ADMIN);
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
       email: "",
       password: ""
     }),
-    _useState6 = _slicedToArray(_useState5, 2),
-    loginInputs = _useState6[0],
-    setLoginInputs = _useState6[1];
+    _useState8 = _slicedToArray(_useState7, 2),
+    loginInputs = _useState8[0],
+    setLoginInputs = _useState8[1];
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     dispatch((0,_store_action_frontSettingAction__WEBPACK_IMPORTED_MODULE_5__.fetchFrontSetting)());
     if (token) {
       history.push(window.location.pathname);
     }
   }, []);
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
       email: "",
       password: ""
     }),
-    _useState8 = _slicedToArray(_useState7, 2),
-    errors = _useState8[0],
-    setErrors = _useState8[1];
+    _useState0 = _slicedToArray(_useState9, 2),
+    errors = _useState0[0],
+    setErrors = _useState0[1];
   var handleValidation = function handleValidation() {
     var errorss = {};
     var isValid = false;
@@ -337354,7 +337358,8 @@ var Login = function Login() {
             valid = handleValidation();
             if (valid) {
               setLoading(true);
-              dispatch((0,_store_action_authAction__WEBPACK_IMPORTED_MODULE_3__.loginAction)(prepareFormData(loginInputs), navigate, setLoading));
+              setAuthError("");
+              dispatch((0,_store_action_authAction__WEBPACK_IMPORTED_MODULE_3__.loginAction)(prepareFormData(loginInputs), navigate, setLoading, setAuthError));
               dataBlank = {
                 email: "",
                 password: ""
@@ -337376,6 +337381,7 @@ var Login = function Login() {
     setLoginInputs(function (inputs) {
       return _objectSpread(_objectSpread({}, inputs), {}, _defineProperty({}, e.target.name, e.target.value));
     });
+    setAuthError("");
     setErrors("");
   };
   var handleHideShowPassword = function handleHideShowPassword(e) {
@@ -337469,9 +337475,13 @@ var Login = function Login() {
                 className: "text-danger d-block fw-400 fs-small mt-2",
                 children: errors["password"] ? errors["password"] : null
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
               className: "text-center",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("button", {
+              children: [authError ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+                className: "alert alert-danger text-start mb-4",
+                role: "alert",
+                children: authError
+              }) : null, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("button", {
                 type: "submit",
                 className: "btn btn-primary w-100",
                 onClick: function onClick(e) {
@@ -337483,7 +337493,7 @@ var Login = function Login() {
                 }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
                   children: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_7__.getFormattedMessage)("login-form.login-btn.label")
                 })
-              })
+              })]
             })]
           })]
         })]
@@ -374589,16 +374599,22 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
       return errorHandler(error);
     });
     var errorHandler = function errorHandler(error) {
-      if (error.response.status === 401 || error.response.data.message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_NOT_PROVIDED || error.response.data.message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_INVALID || error.response.data.message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_INVALID_SIGNATURE || error.response.data.message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_EXPIRED) {
+      var _error$response, _error$response2, _error$config;
+      var status = error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.status;
+      var message = error === null || error === void 0 || (_error$response2 = error.response) === null || _error$response2 === void 0 || (_error$response2 = _error$response2.data) === null || _error$response2 === void 0 ? void 0 : _error$response2.message;
+      var requestUrl = String((error === null || error === void 0 || (_error$config = error.config) === null || _error$config === void 0 ? void 0 : _error$config.url) || '');
+      if (status === 401 || message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_NOT_PROVIDED || message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_INVALID || message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_INVALID_SIGNATURE || message === _constants__WEBPACK_IMPORTED_MODULE_0__.errorMessage.TOKEN_EXPIRED) {
         localStorage.removeItem(_constants__WEBPACK_IMPORTED_MODULE_0__.Tokens.ADMIN);
         localStorage.removeItem(_constants__WEBPACK_IMPORTED_MODULE_0__.Tokens.USER);
         localStorage.removeItem(_constants__WEBPACK_IMPORTED_MODULE_0__.Tokens.GET_PERMISSIONS);
         window.location.href = _environment__WEBPACK_IMPORTED_MODULE_1__.environment.URL + '#' + '/login';
-      } else if (error.response.status === 403 || error.response.status === 404) {
-        window.location.href = _environment__WEBPACK_IMPORTED_MODULE_1__.environment.URL + '#' + '/app/dashboard';
-      } else {
-        return Promise.reject(_objectSpread({}, error));
       }
+      if (status === 403 || status === 404) {
+        if (!requestUrl.includes('login')) {
+          window.location.href = _environment__WEBPACK_IMPORTED_MODULE_1__.environment.URL + '#' + '/app/dashboard';
+        }
+      }
+      return Promise.reject(_objectSpread({}, error));
     };
     var successHandler = function successHandler(response) {
       return response;
@@ -389293,7 +389309,25 @@ var mapPermissionToRoute = function mapPermissionToRoute(permission) {
     return "/app/".concat(entity);
   }
 };
-var loginAction = function loginAction(user, navigate, setLoading) {
+var getApiErrorMessage = function getApiErrorMessage(error) {
+  var _error$response;
+  var fallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "Something went wrong.";
+  var responseData = error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.data;
+  if (responseData !== null && responseData !== void 0 && responseData.message) {
+    return responseData.message;
+  }
+  if (responseData !== null && responseData !== void 0 && responseData.error) {
+    return responseData.error;
+  }
+  if (responseData !== null && responseData !== void 0 && responseData.errors) {
+    var firstErrorKey = Object.keys(responseData.errors)[0];
+    if (firstErrorKey && Array.isArray(responseData.errors[firstErrorKey])) {
+      return responseData.errors[firstErrorKey][0];
+    }
+  }
+  return (error === null || error === void 0 ? void 0 : error.message) || fallback;
+};
+var loginAction = function loginAction(user, navigate, setLoading, setAuthError) {
   return /*#__PURE__*/function () {
     var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(dispatch) {
       return _regeneratorRuntime().wrap(function _callee$(_context) {
@@ -389343,10 +389377,13 @@ var loginAction = function loginAction(user, navigate, setLoading) {
               if (response.data.data.user.language) {
                 window.location.reload();
               }
-            })["catch"](function (_ref2) {
-              var response = _ref2.response;
+            })["catch"](function (error) {
+              var message = getApiErrorMessage(error, "Invalid email or password.");
+              if (setAuthError) {
+                setAuthError(message);
+              }
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
-                text: response.data.message,
+                text: message,
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
               setLoading(false);
@@ -389364,7 +389401,7 @@ var loginAction = function loginAction(user, navigate, setLoading) {
 };
 var logoutAction = function logoutAction(token, navigate) {
   return /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(dispatch) {
+    var _ref2 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee2(dispatch) {
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
@@ -389384,10 +389421,10 @@ var logoutAction = function logoutAction(token, navigate) {
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
                 text: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_6__.getFormattedMessage)("logout.success.message")
               }));
-            })["catch"](function (_ref4) {
-              var response = _ref4.response;
+            })["catch"](function (error) {
+              var message = getApiErrorMessage(error);
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
-                text: response.data.message,
+                text: message,
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
@@ -389398,13 +389435,13 @@ var logoutAction = function logoutAction(token, navigate) {
       }, _callee2);
     }));
     return function (_x2) {
-      return _ref3.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
 };
 var forgotPassword = function forgotPassword(user) {
   return /*#__PURE__*/function () {
-    var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(dispatch) {
+    var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(dispatch) {
       return _regeneratorRuntime().wrap(function _callee3$(_context3) {
         while (1) switch (_context3.prev = _context3.next) {
           case 0:
@@ -389417,14 +389454,14 @@ var forgotPassword = function forgotPassword(user) {
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
                 text: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_6__.getFormattedMessage)("forgot-password-form.success.reset-link.label")
               }));
-            })["catch"](function (_ref6) {
-              var response = _ref6.response;
+            })["catch"](function (error) {
+              var message = getApiErrorMessage(error);
               dispatch({
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR,
-                payload: response.data.message
+                payload: message
               });
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
-                text: response.data.message,
+                text: message,
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
@@ -389435,13 +389472,13 @@ var forgotPassword = function forgotPassword(user) {
       }, _callee3);
     }));
     return function (_x3) {
-      return _ref5.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }();
 };
 var resetPassword = function resetPassword(user, navigate) {
   return /*#__PURE__*/function () {
-    var _ref7 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(dispatch) {
+    var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(dispatch) {
       return _regeneratorRuntime().wrap(function _callee4$(_context4) {
         while (1) switch (_context4.prev = _context4.next) {
           case 0:
@@ -389455,10 +389492,10 @@ var resetPassword = function resetPassword(user, navigate) {
                 text: (0,_shared_sharedMethod__WEBPACK_IMPORTED_MODULE_6__.getFormattedMessage)("reset-password.success.update.message")
               }));
               navigate("/login");
-            })["catch"](function (_ref8) {
-              var response = _ref8.response;
+            })["catch"](function (error) {
+              var message = getApiErrorMessage(error);
               dispatch((0,_toastAction__WEBPACK_IMPORTED_MODULE_3__.addToast)({
-                text: response.data.message,
+                text: message,
                 type: _constants__WEBPACK_IMPORTED_MODULE_1__.toastType.ERROR
               }));
             });
@@ -389469,7 +389506,7 @@ var resetPassword = function resetPassword(user, navigate) {
       }, _callee4);
     }));
     return function (_x4) {
-      return _ref7.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     };
   }();
 };

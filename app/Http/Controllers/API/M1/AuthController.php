@@ -33,6 +33,10 @@ class AuthController extends AppBaseController
             return $this->sendError('Invalid username or password', 422);
         }
 
+        if (! $user->status) {
+            return $this->sendError('Your account is inactive due to payment. Please contact: 0714475702.', 403);
+        }
+
         $token = $user->createToken('token')->plainTextToken;
         $user->last_name = $user->last_name ?? '';
 
